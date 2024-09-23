@@ -91,7 +91,7 @@
 	name = "Powdered Black Tea"
 	id = "slavic_tea"
 	build_type = BIOGENERATOR
-	materials = list(/datum/material/biomass = 4)
+	materials = list(/datum/material/biomass = 5)
 	make_reagent = /datum/reagent/consumable/powdered_tea
 	category = list(
 		RND_CATEGORY_INITIAL,
@@ -102,7 +102,7 @@
 	name = "Powdered Coffee"
 	id = "slavic_coffee"
 	build_type = BIOGENERATOR
-	materials = list(/datum/material/biomass = 4)
+	materials = list(/datum/material/biomass = 5)
 	make_reagent = /datum/reagent/consumable/powdered_coffee
 	category = list(
 		RND_CATEGORY_INITIAL,
@@ -113,7 +113,7 @@
 	name = "Powdered Hot Chocolate"
 	id = "slavic_coco"
 	build_type = BIOGENERATOR
-	materials = list(/datum/material/biomass = 4)
+	materials = list(/datum/material/biomass = 5)
 	make_reagent = /datum/reagent/consumable/powdered_coco
 	category = list(
 		RND_CATEGORY_INITIAL,
@@ -124,7 +124,7 @@
 	name = "Powdered Lemonade"
 	id = "slavic_lemon"
 	build_type = BIOGENERATOR
-	materials = list(/datum/material/biomass = 4)
+	materials = list(/datum/material/biomass = 5)
 	make_reagent = /datum/reagent/consumable/powdered_lemonade
 	category = list(
 		RND_CATEGORY_INITIAL,
@@ -146,7 +146,7 @@
 	name = "Powdered Milk"
 	id = "slavic_milk"
 	build_type = BIOGENERATOR
-	materials = list(/datum/material/biomass = 4)
+	materials = list(/datum/material/biomass = 5)
 	make_reagent = /datum/reagent/consumable/powdered_milk
 	category = list(
 		RND_CATEGORY_INITIAL,
@@ -157,7 +157,7 @@
 	name = "Water"
 	id = "slavic_water"
 	build_type = BIOGENERATOR
-	materials = list(/datum/material/biomass = 1)
+	materials = list(/datum/material/biomass = 0)
 	make_reagent = /datum/reagent/water
 	category = list(
 		RND_CATEGORY_INITIAL,
