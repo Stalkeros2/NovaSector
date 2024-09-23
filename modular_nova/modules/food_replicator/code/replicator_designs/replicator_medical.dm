@@ -108,6 +108,61 @@
 		RND_CATEGORY_NRI_MEDICAL,
 	)
 
+/datum/design/neurine_pill
+	name = "Neurine Pill"
+	id = "slavic_neurine"
+	build_type = BIOGENERATOR
+	materials = list(/datum/material/biomass = 75)
+	build_path = /obj/item/reagent_containers/pill/neurine
+	category = list(
+		RND_CATEGORY_INITIAL,
+		RND_CATEGORY_NRI_MEDICAL,
+	)
+
+/datum/design/mannitol_pill
+	name = "Mannitol Pill"
+	id = "slavic_mannitol"
+	build_type = BIOGENERATOR
+	materials = list(/datum/material/biomass = 75)
+	build_path = /obj/item/reagent_containers/pill/mannitol
+	category = list(
+		RND_CATEGORY_INITIAL,
+		RND_CATEGORY_NRI_MEDICAL,
+	)
+
+/datum/design/insulin_pill
+	name = "Insulin Pill"
+	id = "slavic_insulin"
+	build_type = BIOGENERATOR
+	materials = list(/datum/material/biomass = 75)
+	build_path = /obj/item/reagent_containers/pill/insulin
+	category = list(
+		RND_CATEGORY_INITIAL,
+		RND_CATEGORY_NRI_MEDICAL,
+	)
+
+/datum/design/psicodine_pill
+	name = "Psicodine Pill"
+	id = "slavic_psicodine"
+	build_type = BIOGENERATOR
+	materials = list(/datum/material/biomass = 75)
+	build_path = /obj/item/reagent_containers/pill/psicodine
+	category = list(
+		RND_CATEGORY_INITIAL,
+		RND_CATEGORY_NRI_MEDICAL,
+	)
+
+/datum/design/spaceacillin_syringe
+	name = "Spaceacillin Syringe"
+	id = "slavic_spaceacillin"
+	build_type = BIOGENERATOR
+	materials = list(/datum/material/biomass = 75)
+	build_path = /obj/item/reagent_containers/syringe/antiviral
+	category = list(
+		RND_CATEGORY_INITIAL,
+		RND_CATEGORY_NRI_MEDICAL,
+	)
+
 #undef RND_CATEGORY_NRI_FOOD
 #undef RND_CATEGORY_NRI_MEDICAL
 #undef RND_CATEGORY_NRI_CLOTHING
