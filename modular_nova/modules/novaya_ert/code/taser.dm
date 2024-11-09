@@ -22,71 +22,31 @@
 	weapon_weight = WEAPON_LIGHT
 	w_class = WEIGHT_CLASS_NORMAL
 	internal_magazine = TRUE
+	bolt_wording = "lock"
 	cartridge_wording = "fuse"
 	item_flags = null
-	bolt_type = BOLT_TYPE_NO_BOLT
+	bolt_type = BOLT_TYPE_LOCKING
 	click_on_low_ammo = FALSE
-	must_hold_to_load = FALSE
-	/// whether the taser is cocked
-	var/cocked = FALSE
-
-/obj/item/gun/ballistic/cartridge_taser/update_icon_state()
-	. = ..()
-	icon_state = "[base_icon_state][cocked ? "_cocked" : ""]"
+	tac_reloads = FALSE
 
 /obj/item/gun/ballistic/cartridge_taser/update_overlays()
 	. = ..()
 	if(chambered)
 		var/icon_state = icon_exists(/obj/item/gun/ballistic/cartridge_taser::icon, chambered.base_icon_state) ? chambered.base_icon_state : "fuse"
-		if(cocked)
-			icon_state += "_cocked"
+		if(bolt_locked)
+			icon_state += "_locked"
 		. += icon(/obj/item/gun/ballistic/cartridge_taser::icon, icon_state)
 
-/obj/item/gun/ballistic/cartridge_taser/click_alt(mob/user)
-	if(isnull(chambered) || cocked)
-		return CLICK_ACTION_BLOCKING
-
-	user.put_in_hands(chambered)
-	chambered = magazine.get_round()
-	update_appearance()
-	return CLICK_ACTION_SUCCESS
-
-/obj/item/gun/ballistic/attackby(obj/item/A, mob/user, params)
-	if(istype(A, /obj/item/ammo_casing/fuse))
-		var/obj/item/ammo_casing/fuse/pseudofuse = A
-		if(pseudofuse.projectile_type == null)
-			balloon_alert(user, "fuse burnt!")
-			return FALSE
-	. = ..()
-
-/obj/item/gun/ballistic/cartridge_taser/chamber_round(spin_cylinder, replace_new_round)
-	if(chambered || cocked)
-		return
-	chambered = magazine.get_round()
-	RegisterSignal(chambered, COMSIG_MOVABLE_MOVED, PROC_REF(clear_chambered))
-	update_appearance()
-
-/obj/item/gun/ballistic/cartridge_taser/handle_chamber(empty_chamber = TRUE, from_firing = TRUE, chamber_next_round = FALSE)
-	. = ..()
-	cocked = FALSE
-
-/obj/item/gun/ballistic/cartridge_taser/attack_self(mob/user)
-	if(!chambered)
-		balloon_alert(user, "no fuse inserted!")
-		return
-	balloon_alert(user, "[cocked ? "lock released" : "lock engaged"]")
-	playsound(src, cocked ? eject_sound : rack_sound, 25, TRUE)
-	cocked = !cocked
-	update_appearance()
-
 /obj/item/gun/ballistic/cartridge_taser/try_fire_gun(atom/target, mob/living/user, params)
-	if(!chambered)
-		return FALSE
-	if(!cocked)
+	. = ..()
+	if(!bolt_locked)
 		to_chat(user, span_warning("Without locking the fuse in place, the gun emits a shower of sparks."))
 		do_sparks(2, TRUE, src)
 		return FALSE
-	return ..() //fires, removing the fuse
+
+/obj/item/gun/ballistic/cartridge_taser/handle_chamber(empty_chamber = TRUE, from_firing = TRUE, chamber_next_round = FALSE)
+	. = ..()
+	bolt_locked = FALSE
 
 /obj/item/ammo_box/magazine/internal/cartridge_taser
 	name = "upper fusewell" //Like a magwell but for fuses you know.
