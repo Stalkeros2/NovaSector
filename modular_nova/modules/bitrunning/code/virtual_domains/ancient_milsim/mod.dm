@@ -189,19 +189,36 @@
 	starting_organ = /obj/item/organ/cyberimp/hackerman_deck
 
 /obj/item/mod/module/dispenser/ancient_milsim/sentinel
-	name = "MOD stationary machinegun-burger dispenser module"
-	desc = "This module can create a single disassembled heavy machinegun and additional burgers at the user's liking."
-	dispense_type = /obj/item/automatic_turret_folded
+	name = "MOD stationary machinegun-machinegun ammo box module"
+	desc = "This module can create a single disassembled heavy machinegun and additional ammo boxes at the user's liking."
+	dispense_type = /obj/item/mounted_machine_gun_folded
 	cooldown_time = 15 SECONDS
-	new_cooldown_time = 5 SECONDS
+	new_dispense_type = /obj/item/ammo_box/magazine/mmg_box
+	new_cooldown_time = 15 SECONDS
 
 /obj/item/mod/module/dispenser/ancient_milsim/trooper
 	name = "MOD Sol rifle-Sol rifle magazine dispenser module"
 	desc = "This module can create a single .40 Sol caliber assault rifle and additional magazines at the user's liking."
-	dispense_type = /obj/item/gun/ballistic/automatic/sol_rifle/evil
+	dispense_type = /obj/item/gun/ballistic/automatic/sol_rifle/ancient_milsim
 	cooldown_time = 25 SECONDS
 	new_dispense_type = /obj/item/ammo_box/magazine/c40sol_rifle/standard
 	new_cooldown_time = 15 SECONDS
+
+/obj/item/gun/ballistic/automatic/sol_rifle/ancient_milsim
+	name = "modified Carwo Battle Rifle"
+	desc = "A heavy battle rifle kitted out with a set of custom modifications. None of them are complementing each other; this doesn't look very practical. \
+	Accepts any standard SolFed rifle magazine. <br>\
+	A gut feeling's telling you that despite how terrible this is, it <i>is</i> the most efficient loadout available. In the intended game, at least."
+	icon_state = "infanterie_atrocious"
+	worn_icon_state = "infanterie_atrocious"
+	inhand_icon_state = "infanterie_atrocious"
+	fire_delay = 0.3 SECONDS
+	spread = 5
+	SET_BASE_PIXEL(0, 0)
+
+/obj/item/gun/ballistic/automatic/sol_rifle/ancient_milsim/Initialize(mapload)
+	. = ..()
+	AddComponent(/datum/component/scope, range_modifier = 1.5)
 
 /obj/item/mod/module/insignia/milsim_mechanic
 	color = "#ff7300"

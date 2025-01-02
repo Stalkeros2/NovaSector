@@ -64,10 +64,12 @@
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/saboteur(src)
 
 /obj/structure/closet/crate/secure/weapon/milsim/sentinel
-	name = "sentinel (heavy machinegun/burger dispenser/NVG-sonar)"
+	name = "sentinel (HMG/HMG ammo dispenser/NVG-sonar/HMG tools)"
 
 /obj/structure/closet/crate/secure/weapon/milsim/sentinel/PopulateContents()
 	. = ..()
+	new /obj/item/weldingtool/mini(src)
+	new /obj/item/wrench(src)
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/sentinel(src)
 
 /obj/structure/closet/crate/secure/weapon/milsim/trooper

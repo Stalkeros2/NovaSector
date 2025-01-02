@@ -62,6 +62,11 @@
 /obj/structure/railing/corner/end/flip,
 /turf/open/misc/grass/planet/ancient_milsim,
 /area/virtual_domain/ancient_milsim/snpc_ground)
+"bV" = (
+/obj/effect/mapping_helpers/broken_floor,
+/obj/item/mounted_machine_gun_folded,
+/turf/open/floor/iron/dark,
+/area/virtual_domain/ancient_milsim/carrier)
 "cb" = (
 /obj/structure/railing/corner{
 	dir = 1
@@ -517,7 +522,7 @@
 /turf/open/floor/plating,
 /area/virtual_domain/ancient_milsim/maintenance)
 "ol" = (
-/obj/item/automatic_turret_folded,
+/obj/item/ammo_box/magazine/mmg_box,
 /turf/open/floor/iron/dark,
 /area/virtual_domain/ancient_milsim/carrier)
 "or" = (
@@ -1792,6 +1797,7 @@
 "RZ" = (
 /obj/effect/mapping_helpers/broken_floor,
 /obj/machinery/light/small/broken/directional/north,
+/obj/item/ammo_box/magazine/mmg_box,
 /turf/open/floor/iron/dark,
 /area/virtual_domain/ancient_milsim/carrier)
 "Sh" = (
@@ -2025,6 +2031,11 @@
 	},
 /turf/open/floor/iron/smooth,
 /area/virtual_domain/ancient_milsim/hallway)
+"YN" = (
+/obj/effect/mapping_helpers/broken_floor,
+/obj/item/ammo_box/magazine/mmg_box,
+/turf/open/floor/iron/dark,
+/area/virtual_domain/ancient_milsim/carrier)
 "YY" = (
 /turf/open/floor/iron,
 /area/virtual_domain/ancient_milsim/snpc_hallway)
@@ -2533,9 +2544,9 @@ Cd
 Eh
 Rl
 RP
-RP
+YN
 EB
-RP
+bV
 ol
 no
 Cd

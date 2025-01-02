@@ -8,10 +8,12 @@
 /obj/item/storage/medkit/expeditionary/PopulateContents()
 	if(empty)
 		return
-	new /obj/item/stack/medical/gauze(src)
+	new /obj/item/stack/medical/gauze/twelve(src)
 	new /obj/item/defibrillator/compact/loaded(src)
 	new /obj/item/reagent_containers/hypospray/combat(src)
 	new /obj/item/stack/medical/mesh/advanced(src)
+	new /obj/item/stack/medical/mesh/advanced(src)
+	new /obj/item/stack/medical/suture/medicated(src)
 	new /obj/item/stack/medical/suture/medicated(src)
 	new /obj/item/clothing/glasses/hud/health(src)
 

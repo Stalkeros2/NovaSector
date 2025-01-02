@@ -7,6 +7,7 @@
 	back = /obj/item/mod/control/pre_equipped/contractor/virtual_domain
 	backpack_contents = list(
 		/obj/item/storage/box/survival/interdyne,
+		/obj/item/storage/medkit/expeditionary,
 		/obj/item/storage/box/nif_ghost_box,
 	)
 	r_hand = /obj/item/gun/energy/modular_laser_rifle
