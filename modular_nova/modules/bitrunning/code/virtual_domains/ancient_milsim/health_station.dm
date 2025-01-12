@@ -27,6 +27,11 @@
 		/obj/item/reagent_containers/hypospray/medipen/deforest/halobinin = 10,
 		/obj/item/reagent_containers/hypospray/medipen/deforest/lipital = 10,
 		/obj/item/reagent_containers/hypospray/medipen/deforest/calopine = 10,
+		/obj/item/reagent_containers/hypospray/medipen/deforest/morpital = 10,
+		/obj/item/reagent_containers/hypospray/medipen/deforest/lepoturi = 10,
+		/obj/item/reagent_containers/hypospray/medipen/deforest/coagulants = 10,
+		/obj/item/reagent_containers/hypospray/medipen/deforest/robot_system_cleaner = 10,
+		/obj/item/reagent_containers/hypospray/medipen/deforest/robot_liquid_solder = 10,
 	)
 	var/static/radial_scan = image(icon = 'icons/obj/devices/scanner.dmi', icon_state = "health")
 	var/static/radial_wound = image(icon = 'icons/obj/medical/surgery_tools.dmi', icon_state = "scalpel")
