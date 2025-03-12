@@ -95,3 +95,9 @@
 
 	/// Height of the mob
 	VAR_PROTECTED/mob_height = HUMAN_HEIGHT_MEDIUM
+
+	// NOVA EDIT ADDITON START
+	var/obj/effect/abstract/held_tk_effect/left/held_left
+	var/obj/effect/abstract/held_tk_effect/right/held_right
+	var/held_hover_color
+	// NOVA EDIT END

@@ -68,6 +68,15 @@
 	if (mob_mood)
 		QDEL_NULL(mob_mood)
 
+	// NOVA EDIT ADDITON START
+	if(held_left)
+		held_left.UnregisterSignal(src, COMSIG_ATOM_DIR_CHANGE)
+		QDEL_NULL(held_left)
+	if(held_right)
+		held_right.UnregisterSignal(src, COMSIG_ATOM_DIR_CHANGE)
+		QDEL_NULL(held_right)
+	// NOVA EDIT END
+
 	return ..()
 
 /mob/living/carbon/human/prepare_data_huds()

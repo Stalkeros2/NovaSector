@@ -41,6 +41,9 @@
 #define TRAIT_ASH_ASPECT "ash_aspect"
 #define TRAIT_SPARKLE_ASPECT "sparkle_aspect"
 
+// The trait to make held items float by the head
+#define TRAIT_FLOATING_HELD "held_items_float"
+
 // Trait sources
 #define TRAIT_GHOSTROLE "ghostrole"
 
