@@ -225,29 +225,6 @@
 /area/space)
 "bs" = (
 /obj/structure/table,
-/obj/item/toy/plush/human{
-	pixel_x = -2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 7;
-	pixel_x = 7
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -2;
-	pixel_x = -13
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -3;
-	pixel_x = 2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 17;
-	pixel_x = -11
-	},
-/obj/item/toy/plush/human{
-	pixel_x = 3;
-	pixel_y = 7
-	},
 /obj/effect/turf_decal/tile/dark_green/fourcorners,
 /turf/open/floor/iron,
 /area/space)
@@ -1265,9 +1242,6 @@
 /turf/open/floor/iron/dark,
 /area/space)
 "ga" = (
-/obj/structure/chair/office/light{
-	dir = 4
-	},
 /obj/effect/turf_decal/tile/dark_green/half/contrasted{
 	dir = 4
 	},
@@ -1679,34 +1653,6 @@
 /obj/effect/turf_decal/siding/blue{
 	dir = 5
 	},
-/turf/open/floor/iron,
-/area/space)
-"it" = (
-/obj/structure/table,
-/obj/item/toy/plush/human{
-	pixel_x = -2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 7;
-	pixel_x = 7
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 1;
-	pixel_x = -13
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -3;
-	pixel_x = 2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 10;
-	pixel_x = -11
-	},
-/obj/item/toy/plush/human{
-	pixel_x = 3;
-	pixel_y = 7
-	},
-/obj/effect/turf_decal/tile/dark_green/fourcorners,
 /turf/open/floor/iron,
 /area/space)
 "iu" = (
@@ -2173,9 +2119,7 @@
 /area/space)
 "kX" = (
 /obj/structure/table,
-/obj/item/seeds/coffee/robusta{
-	pixel_x = -4
-	},
+/obj/structure/closet/mini_fridge,
 /turf/open/floor/carpet,
 /area/space)
 "kZ" = (
@@ -2191,34 +2135,6 @@
 /obj/structure/table/reinforced,
 /obj/machinery/recharger,
 /turf/open/floor/iron/dark,
-/area/space)
-"le" = (
-/obj/structure/table,
-/obj/item/toy/plush/human{
-	pixel_x = -2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 7;
-	pixel_x = 7
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -6;
-	pixel_x = -6
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -3;
-	pixel_x = 2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 3;
-	pixel_x = -6
-	},
-/obj/item/toy/plush/human{
-	pixel_x = 3;
-	pixel_y = 7
-	},
-/obj/effect/turf_decal/tile/dark_green/fourcorners,
-/turf/open/floor/iron,
 /area/space)
 "lf" = (
 /obj/structure/rack,
@@ -3070,7 +2986,7 @@
 /area/space)
 "pC" = (
 /obj/machinery/shower/directional/south,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
@@ -3140,32 +3056,9 @@
 /turf/open/misc/dirt/planet,
 /area/space)
 "pQ" = (
-/obj/structure/table,
-/obj/item/toy/plush/human{
-	pixel_x = -2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 7;
-	pixel_x = 7
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 1;
-	pixel_x = -8
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -9;
-	pixel_x = 2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 10;
-	pixel_x = -11
-	},
-/obj/item/toy/plush/human{
-	pixel_x = 3;
-	pixel_y = 7
-	},
-/obj/effect/turf_decal/tile/dark_green/fourcorners,
-/turf/open/floor/iron,
+/obj/effect/turf_decal/tile/neutral/full,
+/obj/machinery/vatgrower,
+/turf/open/floor/iron/dark/textured_large,
 /area/space)
 "pS" = (
 /obj/effect/spawner/random/vending/colavend,
@@ -3685,7 +3578,7 @@
 /area/space)
 "sA" = (
 /obj/machinery/shower/directional/north,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /obj/effect/turf_decal/stripes/line{
 	dir = 8
 	},
@@ -3887,10 +3780,6 @@
 	},
 /obj/structure/chair,
 /turf/open/floor/iron/white/textured_large,
-/area/space)
-"tC" = (
-/obj/machinery/vending/coffee,
-/turf/open/floor/carpet,
 /area/space)
 "tD" = (
 /obj/machinery/door/airlock/multi_tile/glass{
@@ -4225,31 +4114,8 @@
 /turf/open/floor/iron/white/textured_large,
 /area/space)
 "vu" = (
-/obj/structure/table,
-/obj/item/toy/plush/human{
-	pixel_x = -2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 7;
-	pixel_x = 16
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 1;
-	pixel_x = -14
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 2;
-	pixel_x = 4
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 10;
-	pixel_x = -11
-	},
-/obj/item/toy/plush/human{
-	pixel_x = 3;
-	pixel_y = 7
-	},
 /obj/effect/turf_decal/tile/dark_green/fourcorners,
+/obj/structure/table,
 /turf/open/floor/iron,
 /area/space)
 "vv" = (
@@ -4312,7 +4178,7 @@
 /area/space)
 "vJ" = (
 /obj/machinery/shower/directional/north,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /turf/open/floor/iron/white/small,
 /area/space)
 "vO" = (
@@ -4427,7 +4293,7 @@
 /area/space)
 "wp" = (
 /obj/machinery/shower/directional/south,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
@@ -4906,6 +4772,9 @@
 	pixel_y = 17
 	},
 /obj/effect/spawner/random/food_or_drink/donkpockets,
+/obj/item/seeds/coffee/robusta{
+	pixel_x = -4
+	},
 /turf/open/floor/carpet,
 /area/space)
 "yB" = (
@@ -6251,7 +6120,7 @@
 /area/space)
 "Fb" = (
 /obj/machinery/shower/directional/south,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /turf/open/floor/iron/white/small,
 /area/space)
 "Fc" = (
@@ -6450,7 +6319,7 @@
 /area/space)
 "Gi" = (
 /obj/machinery/shower/directional/north,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /obj/effect/turf_decal/stripes/line{
 	dir = 4
 	},
@@ -6823,7 +6692,7 @@
 "Ih" = (
 /obj/machinery/shower/directional/south,
 /obj/effect/decal/cleanable/greenglow,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /turf/open/floor/iron/white,
 /area/space)
 "Ik" = (
@@ -7391,7 +7260,7 @@
 /area/space)
 "KM" = (
 /obj/machinery/shower/directional/north,
-/obj/structure/fluff/shower_drain,
+/obj/structure/drain,
 /turf/open/floor/iron/white,
 /area/space)
 "KO" = (
@@ -8402,31 +8271,17 @@
 /turf/open/floor/wood/tile,
 /area/space)
 "PD" = (
-/obj/structure/table,
-/obj/item/toy/plush/human{
-	pixel_x = -2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 7;
-	pixel_x = 7
-	},
-/obj/item/toy/plush/human{
-	pixel_y = 11;
-	pixel_x = -6
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -3;
-	pixel_x = 2
-	},
-/obj/item/toy/plush/human{
-	pixel_y = -1;
-	pixel_x = -8
-	},
-/obj/item/toy/plush/human{
-	pixel_x = 3;
-	pixel_y = 7
-	},
-/obj/effect/turf_decal/tile/dark_green/fourcorners,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/item/toy/plush/unicorn,
+/obj/structure/rack,
 /turf/open/floor/iron,
 /area/space)
 "PF" = (
@@ -8736,11 +8591,6 @@
 	pixel_y = 4
 	},
 /turf/open/floor/carpet/black,
-/area/space)
-"Rd" = (
-/obj/machinery/vatgrower,
-/obj/effect/turf_decal/tile/neutral/full,
-/turf/open/floor/iron/dark/textured_large,
 /area/space)
 "Re" = (
 /turf/open/floor/iron/white,
@@ -27561,9 +27411,9 @@ er
 er
 kO
 tO
-rf
-kC
 PD
+kC
+bs
 xW
 Ix
 lP
@@ -27739,9 +27589,9 @@ tO
 tO
 tO
 tO
-rf
+PD
 Oj
-it
+bs
 xW
 Li
 rf
@@ -28095,8 +27945,8 @@ sY
 oX
 Tb
 tO
-le
-pQ
+bs
+bs
 bs
 xW
 AR
@@ -30587,8 +30437,8 @@ cY
 cY
 FV
 tO
+pQ
 vO
-Rd
 vO
 wO
 sG
@@ -32936,7 +32786,7 @@ tO
 tO
 LI
 ha
-tC
+ha
 tO
 JD
 JD
