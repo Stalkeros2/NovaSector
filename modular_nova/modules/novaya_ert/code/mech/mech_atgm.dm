@@ -25,6 +25,8 @@
 	var/aiming_time = 9 SECONDS
 	var/aiming_time_left = 0
 	var/aiming_time_fire_threshold = 0.5 SECONDS
+	var/aiming_timer = null // Timer ID for aiming countdown
+	var/movement_penalty = 0.5 SECONDS // Penalty for movement, added to remaining time
 
 	// Targeting
 	var/lastangle = 0
@@ -59,69 +61,8 @@
 		return
 
 	cleanup_aiming_system()
-	unregister_client_signals()
 
 	current_user = user
-	if(user?.client)
-		register_client_signals()
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/register_client_signals()
-	if(!current_user?.client)
-		return
-
-	RegisterSignal(current_user.client, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(on_mouse_down))
-	RegisterSignal(current_user.client, COMSIG_CLIENT_MOUSEDRAG, PROC_REF(on_mouse_drag))
-	RegisterSignal(current_user.client, COMSIG_CLIENT_MOUSEUP, PROC_REF(on_mouse_up))
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/unregister_client_signals()
-	if(!current_user?.client || QDELETED(current_user.client))
-		return
-
-	UnregisterSignal(current_user.client, list(
-		COMSIG_CLIENT_MOUSEDOWN,
-		COMSIG_CLIENT_MOUSEDRAG,
-		COMSIG_CLIENT_MOUSEUP
-	))
-
-// ===== MOUSE INPUT HANDLING =====
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/on_mouse_down(client/source, atom/movable/object, location, control, params)
-	SIGNAL_HANDLER
-
-	if(!validate_mouse_input(source, object))
-		return
-
-	INVOKE_ASYNC(src, PROC_REF(start_aiming), params)
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/on_mouse_drag(client/source, src_object, over_object, src_location, over_location, src_control, over_control, params)
-	SIGNAL_HANDLER
-
-	if(!aiming || !check_user())
-		return
-
-	process_aim(params)
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/on_mouse_up(client/source, atom/movable/object, location, control, params)
-	SIGNAL_HANDLER
-
-	if(!object?.IsAutoclickable())
-		return
-
-	process_aim(params)
-
-	if(aiming_time_left <= aiming_time_fire_threshold && check_user())
-		fire_missile()
-
-	stop_aiming()
-
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/validate_mouse_input(client/source, atom/movable/object)
-	if(source.mob != current_user)
-		return FALSE
-	if(!object?.IsAutoclickable())
-		return FALSE
-	if(object in source.mob.contents || object == source.mob)
-		return FALSE
-	return TRUE
 
 // ===== AIMING SYSTEM =====
 
@@ -134,15 +75,34 @@
 
 	aiming = TRUE
 	aiming_time_left = aiming_time
+	lastangle = 0 // Initialize last angle
 
 	create_laser_tracer(params)
-	START_PROCESSING(SSfastprocess, src)
+
+	// Set up timer for aiming lock
+	if(aiming_timer)
+		deltimer(aiming_timer)
+	aiming_timer = addtimer(CALLBACK(src, PROC_REF(complete_aiming)), aiming_time, TIMER_STOPPABLE)
+
+	// Set up cursor tracking
+	addtimer(CALLBACK(src, PROC_REF(update_aim_from_cursor)), 1)
+
+	// Let the user know aiming has started
+	to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM targeting system activated. Click again to fire or cancel.")]")
 	return TRUE
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/complete_aiming()
+	if(aiming && check_user())
+		aiming_time_left = aiming_time_fire_threshold - 0.1 // Just below threshold to allow firing
+		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("Target lock acquired! Click again to fire.")]")
+	aiming_timer = null
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/stop_aiming()
 	aiming = FALSE
 	aiming_time_left = 0
-	STOP_PROCESSING(SSfastprocess, src)
+	if(aiming_timer)
+		deltimer(aiming_timer)
+		aiming_timer = null
 	cleanup_tracer()
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/cleanup_aiming_system()
@@ -199,12 +159,48 @@
 	if(!current_tracer || !chassis)
 		return
 
-	var/turf/target_turf = current_target ? get_turf(current_target) : get_turf_in_angle(lastangle, get_turf(chassis), missile_range)
+	var/turf/origin_turf = get_turf(chassis)
+	var/turf/target_turf = current_target ? get_turf(current_target) : get_turf_in_angle(lastangle, origin_turf, missile_range)
 
-	if(target_turf)
-		current_tracer.forceMove(target_turf)
-		current_tracer.update_beam(chassis)
+	if(!target_turf)
+		return
 
+	// Check for dense obstacles in the path
+	var/turf/actual_target = target_turf
+	var/list/line = get_line(origin_turf, target_turf)
+	for(var/turf/T in line)
+		if(T == origin_turf) // Skip the starting turf
+			continue
+		if(T.density)
+			actual_target = T
+			break
+		// Check for windows, doors, and other dense objects
+		for(var/obj/structure/S in T)
+			if(S.density)
+				actual_target = T
+				break
+
+	current_tracer.forceMove(actual_target)
+	current_tracer.update_beam(chassis)
+
+// Convert screen coordinates to world coordinates
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/get_turf_at_screen_loc(client/client, x_pos, y_pos)
+	if(!client?.view || !client?.eye)
+		return null
+
+	var/turf/center_turf = get_turf(client.eye)
+	if(!center_turf)
+		return null
+
+	// Calculate offsets from center based on client's view size
+	var/list/view_size = getviewsize(client.view)
+	var/x_offset = round(x_pos - (view_size[1] / 2))
+	var/y_offset = round(y_pos - (view_size[2] / 2))
+
+	// Get the turf at those coordinates
+	return locate(center_turf.x + x_offset, center_turf.y + y_offset, center_turf.z)
+
+// Legacy method - keep for backward compatibility
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/get_turf_at_screen_coords(client/client, icon_x, icon_y)
 	if(!client?.eye)
 		return null
@@ -238,28 +234,59 @@
 		"y" = round((view_size[2] * world.icon_size) / 2)
 	)
 
+// Continuously update aim position based on cursor location
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/update_aim_from_cursor()
+	if(!aiming || !check_user() || !current_user?.client)
+		return
+
+	// Get current mouse position
+	var/client/user_client = current_user.client
+
+	// Get mouse parameters
+	var/list/modifiers = params2list(user_client.mouseParams)
+	var/icon_x = text2num(modifiers["icon-x"]) || 16
+	var/icon_y = text2num(modifiers["icon-y"]) || 16
+
+	// Get target turf from mouse coordinates
+	var/turf/target_turf = get_turf_at_screen_coords(user_client, icon_x, icon_y)
+
+	if(target_turf)
+	{
+		// Calculate angle to target
+		var/turf/source_turf = get_turf(chassis)
+		if(source_turf)
+		{
+			var/new_angle = get_angle(source_turf, target_turf)
+
+			// Check if there's significant movement
+			if(lastangle > 0 && abs(new_angle - lastangle) > 5) // 5 degree threshold
+			{
+				// Add small penalty for movement, but don't exceed the original aiming time
+				aiming_time_left = min(aiming_time, aiming_time_left + movement_penalty)
+
+				// Reset timer if needed
+				if(aiming_timer)
+					deltimer(aiming_timer)
+				aiming_timer = addtimer(CALLBACK(src, PROC_REF(complete_aiming)), aiming_time_left, TIMER_STOPPABLE)
+			}
+
+			lastangle = new_angle
+			current_target = target_turf
+			update_laser_position()
+		}
+	}
+
+	// Continue tracking cursor if aiming
+	if(aiming)
+		addtimer(CALLBACK(src, PROC_REF(update_aim_from_cursor)), 1) // Update every 0.1 seconds for smoother tracking
+
 // ===== PROCESSING =====
 
-/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/process(delta_time)
-	if(!aiming || !check_user())
-		stop_aiming()
-		return
-
-	aiming_time_left = max(0, aiming_time_left - delta_time)
-
-	if(aiming_time_left <= 0)
-		fire_missile()
-		return
-
-	// Update laser position based on current mouse position
-	var/client/user_client = current_user.client
-	if(!user_client?.mouseParams)
-		return
-
-	var/target_angle = mouse_angle_from_client(user_client, user_client.mouseParams)
-	if(!isnull(target_angle))
-		lastangle = target_angle
-		update_laser_position()
+// Removed process() function as we now use timers for aiming instead of processing
+// The aiming system is now handled by:
+// 1. start_aiming() - sets up the timer and cursor tracking
+// 2. update_aim_from_cursor() - tracks cursor position and adds movement penalties
+// 3. complete_aiming() - completes the aiming process when timer ends
 
 // ===== WEAPON ACTION =====
 
@@ -270,13 +297,33 @@
 	set_user(source)
 
 	if(aiming)
+	{
+		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM targeting system deactivated.")]")
+		if(aiming_time_left <= aiming_time_fire_threshold && check_user())
+		{
+			to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_warning("Target locked! Firing missile!")]")
+			fire_missile()
+		}
 		stop_aiming()
-		return FALSE
+		return TRUE
+	}
 
 	if(current_missile)
 		return FALSE
 
-	return start_aiming()
+	// Get current mouse position for initial targeting
+	var/client/C = source.client
+	if(!C)
+		return FALSE
+
+	// Start the aiming process
+	var/success = start_aiming(C.mouseParams || list())
+
+	// If we successfully started aiming, set up cursor tracking
+	if(success && aiming)
+		addtimer(CALLBACK(src, PROC_REF(update_aim_from_cursor)), 1)
+
+	return success
 
 // ===== MISSILE MANAGEMENT =====
 
@@ -354,12 +401,20 @@
 
 /obj/projectile/bullet/rocket/atgm/proc/update_guidance()
 	if(!guiding_laser || QDELETED(guiding_laser))
+	{
+		if(!free_flight && launcher?.chassis)
+			to_chat(launcher.chassis.occupants, "[icon2html(launcher, launcher.chassis.occupants)][span_warning("Missile has lost laser tracking! Entering free flight mode.")]")
 		free_flight = TRUE
 		return
+	}
 
 	if(!launcher || distance_traveled > max_tether_distance)
+	{
+		if(!free_flight && launcher?.chassis)
+			to_chat(launcher.chassis.occupants, "[icon2html(launcher, launcher.chassis.occupants)][span_warning("Missile has exceeded guidance range! Entering free flight mode.")]")
 		free_flight = TRUE
 		return
+	}
 
 	var/turf/laser_pos = get_turf(guiding_laser)
 	var/turf/current_pos = get_turf(src)
@@ -446,7 +501,7 @@
 	name = "laser designator"
 	desc = "A targeting laser for guided munitions."
 	icon = 'icons/obj/weapons/guns/projectiles.dmi'
-	icon_state = "laser"
+	icon_state = "ibeam"
 	light_color = COLOR_RED
 	light_range = 3
 	alpha = 200
@@ -467,5 +522,4 @@
 
     QDEL_NULL(guidance_beam)
     // Use the Beam() proc to create a beam from source to this object
-    guidance_beam = source.Beam(src, icon_state = "line", time = INFINITY, maxdistance = INFINITY)
-
+    guidance_beam = source.Beam(src, icon_state = "ibeam", icon = 'icons/obj/weapons/guns/projectiles.dmi', time = INFINITY, maxdistance = INFINITY)
