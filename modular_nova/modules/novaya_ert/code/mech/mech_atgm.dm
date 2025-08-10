@@ -8,10 +8,9 @@
 	icon_state = "lmg"
 	projectile = /obj/projectile/bullet/rocket/atgm
 	fire_sound = 'sound/items/weapons/gun/general/rocket_launch.ogg'
-	projectiles = 4
+	projectiles = 1
 	projectiles_cache = 4
 	projectiles_cache_max = 4
-	disabledreload = TRUE
 	equip_cooldown = 60
 	missile_speed = 2
 	missile_range = 30
@@ -22,7 +21,7 @@
 
 	// Aiming system
 	var/aiming = FALSE
-	var/aiming_time = 9 SECONDS
+	var/aiming_time = 4 SECONDS
 	var/aiming_time_left = 0
 	var/aiming_time_fire_threshold = 0.5 SECONDS
 	var/aiming_timer = null // Timer ID for aiming countdown
@@ -105,7 +104,10 @@
 	if(aiming && aiming_time_left <= aiming_time_fire_threshold && check_user())
 		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_warning("Target locked! Firing missile!")]")
 		fire_missile()
-	stop_aiming()
+		// Ensure we stop aiming completely after firing
+		stop_aiming()
+	else
+		stop_aiming()
 
 // ===== AIMING SYSTEM =====
 
@@ -374,17 +376,61 @@
 
 	set_user(source)
 
-	if(aiming)
+	// Check if we're already aiming at the same target
+	if(aiming && current_target && get_turf(target) == current_target)
+		// Clicking the same target again should remove the laser
 		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM targeting system deactivated.")]")
+		stop_aiming()
+		return TRUE
+
+	if(aiming)
+		// Clicking a different target should move the laser
+		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM laser designator repositioned.")]")
 		if(aiming_time_left <= aiming_time_fire_threshold && check_user())
+			// If we were ready to fire, fire at the new location
 			to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_warning("Target locked! Firing missile!")]")
 			fire_missile()
-			stop_aiming() // Normal stop when firing
+			// Start a new aiming session at the new target
+			var/client/C = source.client
+			if(C && target)
+				create_laser_tracer_at_turf(get_turf(target))
+				register_client_signals(source)
+				aiming = TRUE
+				current_user = source
+				RegisterSignal(C, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(on_mouse_down))
+			return TRUE
 		else
 			// User manually cancelled - preserve missile in free flight
 			stop_aiming_preserve_missile()
-		return TRUE
+			// Start a new aiming session at the new target
+			var/client/C = source.client
+			if(C && target)
+				create_laser_tracer_at_turf(get_turf(target))
+				register_client_signals(source)
+				aiming = TRUE
+				current_user = source
+				RegisterSignal(C, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(on_mouse_down))
+			return TRUE
 
+	// If there's an active missile in flight, allow redirecting the laser
+	if(current_missile && !current_missile.free_flight)
+		// Start a new aiming session to redirect the laser
+		var/client/C = source.client
+		if(!C)
+			return FALSE
+
+		// Create a new tracer at the target location
+		var/turf/target_turf = get_turf(target)
+		if(target_turf)
+			create_laser_tracer_at_turf(target_turf)
+			// Register mouse signals for tracking
+			register_client_signals(source)
+			aiming = TRUE
+			current_user = source
+			to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM laser redirected. Move mouse to guide missile.")]")
+			return TRUE
+
+	// If no active missile or missile is in free flight, don't allow new targeting
 	if(current_missile)
 		return FALSE
 
@@ -405,7 +451,7 @@
 // ===== MISSILE MANAGEMENT =====
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/fire_missile()
-	if(projectiles <= 0 || !current_tracer || !chassis)
+	if(projectiles <= 0 || !chassis)
 		stop_aiming()
 		return FALSE
 
@@ -423,15 +469,31 @@
 	if(current_target)
 		target_angle = get_angle(start_turf, current_target)
 
-	current_missile.aim_projectile(current_tracer, current_user)
+	// Ensure current_tracer exists before aiming
+	if(current_tracer)
+		current_missile.aim_projectile(current_tracer, current_user)
+	else
+		current_missile.aim_projectile(current_target, current_user)
+
 	current_missile.fire(target_angle)
 
 	playsound(chassis, fire_sound, 50, TRUE)
 	log_message("Fired [current_missile.name] from [name].", LOG_MECHA)
 
-	// Transfer tracer ownership to missile
+	// Clear all aiming references after firing to prevent multiple launches
 	current_tracer = null
-	stop_aiming()
+	current_target = null
+	lastangle = 0
+	aiming = FALSE
+	aiming_time_left = 0
+	if(aiming_timer)
+		deltimer(aiming_timer)
+		aiming_timer = null
+
+	// Unregister client signals
+	if(current_user?.client)
+		unregister_client_signals(current_user)
+
 	return TRUE
 
 // create_missile_tether removed - missile now uses distance-based free flight
@@ -459,9 +521,15 @@
 	var/max_tether_distance = 8  // Distance at which missile enters free flight
 	var/free_flight = FALSE
 	var/turn_rate = 5
+	var/initial_slow_speed = 0.5  // Slow speed for first two tiles
+	var/initial_tiles = 2  // Number of tiles to move at slow speed
+	var/tiles_traveled = 0  // Counter for tiles traveled at slow speed
+	var/initial_speed = 1  // Store original speed
 
 /obj/projectile/bullet/rocket/atgm/Initialize(mapload)
 	. = ..()
+	// Set initial slow speed
+	speed = initial_slow_speed
 
 /obj/projectile/bullet/rocket/atgm/Destroy()
 
@@ -473,6 +541,11 @@
 	QDEL_NULL(movement_vector)
 	return ..()
 
+/obj/projectile/bullet/rocket/atgm/proc/missile_released()
+	// Clear references to prevent memory leaks
+	if(launcher)
+		launcher.current_missile = null
+
 /obj/projectile/bullet/rocket/atgm/proc/update_guidance()
 	if(!guiding_laser || QDELETED(guiding_laser))
 		if(!free_flight && launcher?.chassis)
@@ -480,13 +553,11 @@
 		free_flight = TRUE
 		return
 
-
 	if(!launcher || distance_traveled > max_tether_distance)
 		if(!free_flight && launcher?.chassis)
 			to_chat(launcher.chassis.occupants, "[icon2html(launcher, launcher.chassis.occupants)][span_warning("Missile has exceeded guidance range! Entering free flight mode.")]")
 		free_flight = TRUE
 		return
-
 
 	var/turf/laser_pos = get_turf(guiding_laser)
 	var/turf/current_pos = get_turf(src)
@@ -520,6 +591,11 @@
 		// Fallback: create movement vector if it doesn't exist
 		movement_vector = new(speed, angle)
 
+	// Check if we've hit the target directly
+	if(current_pos == laser_pos)
+		if(!free_flight && launcher?.chassis)
+			to_chat(launcher.chassis.occupants, "[icon2html(launcher, launcher.chassis.occupants)][span_warning("Missile has reached target!")]")
+
 /obj/projectile/bullet/rocket/atgm/proc/angle_difference(current_angle, target_angle)
 	var/diff = target_angle - current_angle
 
@@ -539,7 +615,23 @@
 	if(QDELETED(src) || free_flight)
 		return .
 
-	update_guidance()
+	// Ensure movement vector exists before updating guidance
+	if(!movement_vector)
+		movement_vector = new(speed, angle)
+
+	// Handle slow start behavior
+	if(tiles_traveled < initial_tiles)
+		tiles_traveled += speed * delta_time
+		if(tiles_traveled >= initial_tiles)
+			// After traveling initial tiles at slow speed, restore normal speed
+			speed = initial_speed
+			if(movement_vector)
+				movement_vector.set_speed(speed)
+
+	// Only update guidance if we have a valid target
+	if(guiding_laser && !QDELETED(guiding_laser))
+		update_guidance()
+
 	distance_traveled += speed * delta_time
 
 	// Check if missile has exceeded range, but don't delete if in free flight
@@ -577,6 +669,10 @@
 	if(!movement_vector)
 		movement_vector = new(speed, angle)
 
+	// Initialize tracking variables
+	distance_traveled = 0
+	tiles_traveled = 0
+
 /obj/projectile/bullet/rocket/atgm/on_hit(atom/target, blocked, pierce_hit)
 	// Call parent first for proper rocket handling
 	..()
@@ -584,13 +680,13 @@
 	return BULLET_ACT_HIT
 
 /obj/projectile/bullet/rocket/atgm/do_boom(atom/target, random_crit_gib = FALSE)
-	// More powerful explosion for ATGM
+	// Enhanced explosion for ATGM - more powerful than standard rockets
 	explosion(
 		target,
 		devastation_range = 1,
 		heavy_impact_range = 2,
-		light_impact_range = 3,
-		flash_range = 4,
+		light_impact_range = 4,
+		flash_range = 5,
 		explosion_cause = src
 	)
 
