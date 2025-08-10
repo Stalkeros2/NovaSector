@@ -90,7 +90,11 @@
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/on_mouse_drag(client/source, src_object, over_object, src_location, over_location, src_control, over_control, params)
 	SIGNAL_HANDLER
 	if(aiming && check_user())
-		process_aim(params)
+		// Use different procedure based on whether we have an active missile
+		if(current_missile && !current_missile.free_flight)
+			process_missile_guidance(params)
+		else
+			process_aim(params)
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/on_mouse_down(client/source, atom/movable/object, location, control, params)
 	SIGNAL_HANDLER
@@ -112,7 +116,7 @@
 // ===== AIMING SYSTEM =====
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/start_aiming(params, atom/initial_target = null)
-	if(aiming || current_missile)
+	if(aiming && !current_missile)
 		return FALSE
 
 	if(!check_user())
@@ -159,7 +163,10 @@
 	if(aiming_timer)
 		deltimer(aiming_timer)
 		aiming_timer = null
-	cleanup_tracer()
+	
+	// Only clean up tracer if we're not guiding an active missile
+	if(!current_missile || current_missile.free_flight)
+		cleanup_tracer()
 
 	// Unregister client signals when stopping aiming
 	if(current_user?.client)
@@ -171,7 +178,10 @@
 	if(aiming_timer)
 		deltimer(aiming_timer)
 		aiming_timer = null
-	cleanup_tracer() // This will cause missile to enter free flight mode
+	
+	// Only clean up tracer if we're not actively guiding a missile
+	if(!current_missile || current_missile.free_flight)
+		cleanup_tracer() // This will cause missile to enter free flight mode
 
 	// Unregister client signals when stopping aiming
 	if(current_user?.client)
@@ -210,6 +220,41 @@
 	QDEL_NULL(current_tracer)
 
 // ===== TARGETING =====
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/process_missile_guidance(params)
+	// This procedure handles laser guidance for active missiles
+	if(!current_user?.client || !current_missile || current_missile.free_flight)
+		return
+
+	var/turf/target_turf = null
+
+	// Try to get turf from params if available (from client signals)
+	if(params)
+		target_turf = calculate_target_turf(params)
+
+	// If no turf from params, use the mouse object reference from client
+	if(!target_turf && current_user.client?.mouse_object_ref)
+		var/atom/mouse_target = current_user.client.mouse_object_ref.resolve()
+		if(mouse_target)
+			target_turf = get_turf(mouse_target)
+
+	if(!target_turf)
+		return
+
+	// Calculate the angle between the mecha and the target turf
+	var/turf/source_turf = get_turf(chassis)
+	if(!source_turf)
+		return
+
+	var/new_angle = get_angle(source_turf, target_turf)
+	lastangle = new_angle
+
+	// Update the current target
+	current_target = target_turf
+	update_laser_position()
+
+	// Update missile guidance
+	current_missile.guiding_laser = current_tracer
 
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/launcher/atgm/proc/get_turf_in_angle(angle, turf/starting_turf, distance)
 	if(!starting_turf || !angle || !distance)
@@ -376,45 +421,9 @@
 
 	set_user(source)
 
-	// Check if we're already aiming at the same target
-	if(aiming && current_target && get_turf(target) == current_target)
-		// Clicking the same target again should remove the laser
-		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM targeting system deactivated.")]")
-		stop_aiming()
-		return TRUE
-
-	if(aiming)
-		// Clicking a different target should move the laser
-		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM laser designator repositioned.")]")
-		if(aiming_time_left <= aiming_time_fire_threshold && check_user())
-			// If we were ready to fire, fire at the new location
-			to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_warning("Target locked! Firing missile!")]")
-			fire_missile()
-			// Start a new aiming session at the new target
-			var/client/C = source.client
-			if(C && target)
-				create_laser_tracer_at_turf(get_turf(target))
-				register_client_signals(source)
-				aiming = TRUE
-				current_user = source
-				RegisterSignal(C, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(on_mouse_down))
-			return TRUE
-		else
-			// User manually cancelled - preserve missile in free flight
-			stop_aiming_preserve_missile()
-			// Start a new aiming session at the new target
-			var/client/C = source.client
-			if(C && target)
-				create_laser_tracer_at_turf(get_turf(target))
-				register_client_signals(source)
-				aiming = TRUE
-				current_user = source
-				RegisterSignal(C, COMSIG_CLIENT_MOUSEDOWN, PROC_REF(on_mouse_down))
-			return TRUE
-
 	// If there's an active missile in flight, allow redirecting the laser
 	if(current_missile && !current_missile.free_flight)
-		// Start a new aiming session to redirect the laser
+		// Redirect the laser to a new position
 		var/client/C = source.client
 		if(!C)
 			return FALSE
@@ -427,12 +436,12 @@
 			register_client_signals(source)
 			aiming = TRUE
 			current_user = source
-			to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM laser redirected. Move mouse to guide missile.")]")
+			// Process the initial guidance
+			process_missile_guidance(C.mouseParams || list())
+			to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("ATGM laser redirected. Missile now tracking new target.")]")
 			return TRUE
 
-	// If no active missile or missile is in free flight, don't allow new targeting
-	if(current_missile)
-		return FALSE
+/* Redundant check already handled above */
 
 	// Get current mouse position for initial targeting
 	var/client/C = source.client
@@ -480,20 +489,8 @@
 	playsound(chassis, fire_sound, 50, TRUE)
 	log_message("Fired [current_missile.name] from [name].", LOG_MECHA)
 
-	// Clear all aiming references after firing to prevent multiple launches
-	current_tracer = null
-	current_target = null
-	lastangle = 0
-	aiming = FALSE
-	aiming_time_left = 0
-	if(aiming_timer)
-		deltimer(aiming_timer)
-		aiming_timer = null
-
-	// Unregister client signals
-	if(current_user?.client)
-		unregister_client_signals(current_user)
-
+	// Keep the laser designator active for guidance redirection
+	// Don't clear all aiming references - keep them for missile guidance
 	return TRUE
 
 // create_missile_tether removed - missile now uses distance-based free flight
