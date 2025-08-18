@@ -494,6 +494,10 @@
 "by" = (
 /turf/open/floor/stone/forest,
 /area/space)
+"bz" = (
+/obj/structure/table/wood,
+/turf/open/floor/wood/parquet,
+/area/space)
 "bA" = (
 /obj/item/cardboard_cutout/xenomorph,
 /turf/open/floor/plating,
@@ -839,6 +843,10 @@
 	dir = 4
 	},
 /turf/open/floor/iron,
+/area/space)
+"cC" = (
+/obj/structure/table,
+/turf/open/floor/wood/parquet,
 /area/space)
 "cD" = (
 /obj/effect/turf_decal/delivery/red,
@@ -4833,6 +4841,12 @@
 /obj/item/book/manual/wiki/security_space_law,
 /turf/open/floor/eighties,
 /area/space)
+"qb" = (
+/obj/structure/chair/wood{
+	dir = 4
+	},
+/turf/open/floor/wood/parquet,
+/area/space)
 "qc" = (
 /obj/structure/chair/sofa/right/brown{
 	dir = 1
@@ -5102,6 +5116,10 @@
 	dir = 9
 	},
 /turf/open/floor/asphalt/outdoors,
+/area/space)
+"qY" = (
+/obj/machinery/autolathe,
+/turf/open/floor/iron/smooth,
 /area/space)
 "qZ" = (
 /obj/structure/flora/bush/flowers_pp/style_random,
@@ -6325,10 +6343,7 @@
 /turf/open/floor/iron/white/textured_large,
 /area/space)
 "vu" = (
-/obj/structure/table{
-	pixel_x = 0;
-	pixel_y = 0
-	},
+/obj/structure/table,
 /obj/item/toy/plush/unicorn{
 	pixel_x = 6;
 	pixel_y = -5
@@ -6450,6 +6465,11 @@
 	},
 /turf/open/floor/iron/grimy,
 /area/space)
+"vN" = (
+/obj/structure/table,
+/obj/machinery/coffeemaker/impressa,
+/turf/open/floor/wood/parquet,
+/area/space)
 "vO" = (
 /obj/effect/turf_decal/tile/neutral/full,
 /turf/open/floor/iron/dark/textured_large,
@@ -6526,6 +6546,11 @@
 "wc" = (
 /obj/structure/window/reinforced/survival_pod/spawner/directional/east,
 /turf/open/floor/carpet/black,
+/area/space)
+"wd" = (
+/obj/structure/table,
+/obj/item/storage/toolbox/electrical,
+/turf/open/floor/iron/smooth,
 /area/space)
 "we" = (
 /obj/machinery/door/airlock/multi_tile/metal,
@@ -7447,6 +7472,11 @@
 /obj/item/trash/can/food/envirochow,
 /turf/open/floor/plating,
 /area/space)
+"zc" = (
+/obj/structure/table,
+/obj/item/storage/toolbox/mechanical,
+/turf/open/floor/iron/smooth,
+/area/space)
 "zd" = (
 /obj/machinery/conveyor{
 	dir = 4;
@@ -7606,6 +7636,11 @@
 	dir = 1
 	},
 /turf/open/floor/iron,
+/area/space)
+"zC" = (
+/obj/structure/rack,
+/obj/item/stack/sheet/mineral/plasma/fifty,
+/turf/open/floor/iron/smooth,
 /area/space)
 "zD" = (
 /obj/structure/chair/sofa/corp/right,
@@ -8014,6 +8049,11 @@
 "AI" = (
 /obj/structure/flora/bush/large/style_random,
 /turf/open/misc/grass/planet,
+/area/space)
+"AJ" = (
+/obj/structure/table,
+/obj/item/storage/fancy/coffee_condi_display,
+/turf/open/floor/wood/parquet,
 /area/space)
 "AK" = (
 /obj/structure/sink/directional/south,
@@ -8718,6 +8758,10 @@
 /obj/structure/window/reinforced/survival_pod/spawner/directional/east,
 /turf/open/floor/iron/smooth,
 /area/space)
+"Dk" = (
+/obj/machinery/vending/engivend,
+/turf/open/floor/iron/smooth,
+/area/space)
 "Dl" = (
 /obj/effect/turf_decal/tile/blue/anticorner{
 	dir = 1
@@ -8921,6 +8965,10 @@
 	dir = 1
 	},
 /turf/open/floor/stone/forest,
+/area/space)
+"DT" = (
+/obj/machinery/vending/tool,
+/turf/open/floor/iron/smooth,
 /area/space)
 "DU" = (
 /obj/machinery/recharge_station,
@@ -9694,6 +9742,11 @@
 /obj/effect/turf_decal/stripes/red/full,
 /mob/living/basic/cybersun_ai_core,
 /turf/open/floor/engine,
+/area/space)
+"GK" = (
+/obj/structure/table,
+/obj/item/storage/toolbox/emergency,
+/turf/open/floor/iron/smooth,
 /area/space)
 "GL" = (
 /obj/machinery/modular_computer/preset/civilian,
@@ -11200,6 +11253,11 @@
 /obj/structure/window/reinforced/survival_pod/spawner/directional/south,
 /turf/open/floor/iron/dark,
 /area/space)
+"LW" = (
+/obj/structure/rack,
+/obj/item/stack/sheet/plasteel/fifty,
+/turf/open/floor/iron/smooth,
+/area/space)
 "LX" = (
 /obj/structure/extinguisher_cabinet/directional/south,
 /obj/machinery/light/directional/south,
@@ -11897,6 +11955,12 @@
 	id = "factory"
 	},
 /turf/open/floor/mineral/plastitanium/red,
+/area/space)
+"Ol" = (
+/obj/structure/chair/wood{
+	dir = 8
+	},
+/turf/open/floor/wood/parquet,
 /area/space)
 "Om" = (
 /obj/structure/table/reinforced,
@@ -12971,6 +13035,12 @@
 	},
 /turf/open/floor/asphalt/outdoors,
 /area/space)
+"RL" = (
+/obj/structure/rack,
+/obj/item/stack/sheet/iron/fifty,
+/obj/item/stack/sheet/iron/fifty,
+/turf/open/floor/iron/smooth,
+/area/space)
 "RM" = (
 /obj/effect/turf_decal/siding/white/inner_corner,
 /obj/effect/turf_decal/siding/white{
@@ -13355,6 +13425,12 @@
 /obj/structure/barricade/sandbags,
 /turf/open/floor/iron/smooth_large,
 /area/space)
+"SY" = (
+/obj/structure/rack,
+/obj/item/stack/sheet/glass/fifty,
+/obj/item/stack/sheet/glass/fifty,
+/turf/open/floor/iron/smooth,
+/area/space)
 "Ta" = (
 /obj/structure/table/glass,
 /obj/effect/turf_decal/tile/yellow/full,
@@ -13723,6 +13799,10 @@
 /obj/structure/closet/bombcloset/security,
 /obj/machinery/light/directional/west,
 /turf/open/floor/iron/dark,
+/area/space)
+"Ur" = (
+/obj/structure/closet/secure_closet/freezer/kitchen/all_access,
+/turf/open/floor/wood/parquet,
 /area/space)
 "Us" = (
 /obj/structure/sign/departments/medbay/directional/south,
@@ -14430,6 +14510,10 @@
 "WD" = (
 /obj/structure/flora/bush/flowers_pp/style_random,
 /turf/open/misc/asteroid/forest,
+/area/space)
+"WE" = (
+/obj/structure/sign/chalkboard_menu,
+/turf/closed/wall/r_wall/syndicate/nodiagonal,
 /area/space)
 "WF" = (
 /obj/machinery/door/airlock/multi_tile/metal{
@@ -17429,8 +17513,8 @@ Gu
 Gu
 FV
 FV
-Of
-Of
+Ur
+vN
 FV
 Sz
 WU
@@ -17780,13 +17864,13 @@ Gu
 Gu
 Gu
 Gu
-FV
+WE
+bz
+bz
 Of
-Of
-Of
-Of
-Of
-Of
+AJ
+cC
+cC
 FV
 bJ
 bJ
@@ -17959,8 +18043,8 @@ Gu
 Gu
 Gu
 FV
-Of
-Of
+Ol
+Ol
 Of
 Of
 Of
@@ -18136,13 +18220,13 @@ Gu
 Gu
 Gu
 FV
+qb
 Of
+qb
 Of
+qb
 Of
-Of
-Of
-Of
-Of
+qb
 FV
 bJ
 bJ
@@ -18314,13 +18398,13 @@ Gu
 Gu
 Gu
 FV
+bz
 Of
+bz
 Of
+bz
 Of
-Of
-Of
-Of
-Of
+bz
 FV
 bJ
 bJ
@@ -18492,13 +18576,13 @@ FV
 FV
 FV
 FV
+Ol
 Of
+Ol
 Of
+Ol
 Of
-Of
-Of
-Of
-Of
+Ol
 FV
 fK
 FV
@@ -22936,11 +23020,11 @@ oX
 oX
 oX
 FV
+GK
 oX
 oX
 oX
-oX
-oX
+wd
 FV
 FV
 FV
@@ -23114,11 +23198,11 @@ Da
 Da
 oX
 FV
+zc
 oX
 oX
 oX
-oX
-oX
+wd
 FV
 zO
 FV
@@ -23292,11 +23376,11 @@ ei
 Da
 oX
 FV
+SY
 oX
 oX
 oX
-oX
-oX
+zC
 FV
 zO
 FV
@@ -23470,11 +23554,11 @@ ei
 Da
 FV
 FV
-oX
-oX
-oX
-oX
-oX
+RL
+DT
+Dk
+qY
+LW
 FV
 zO
 FV
