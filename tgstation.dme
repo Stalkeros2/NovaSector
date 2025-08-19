@@ -7507,6 +7507,7 @@
 #include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\fog_of_war.dm"
 #include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\ghost_spawner.dm"
 #include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\health_station.dm"
+#include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\idle_squad_chatter.dm"
 #include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\loot_spawner.dm"
 #include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\mapping_helpers.dm"
 #include "modular_nova\modules\bitrunning\code\virtual_domains\ancient_milsim\mine.dm"
