@@ -111,7 +111,6 @@
 		/datum/ai_planning_subtree/follow_squad_leader,
 		/datum/ai_planning_subtree/attack_obstacle_in_path/trooper,
 		/datum/ai_planning_subtree/basic_melee_attack_subtree,
-		/datum/ai_planning_subtree/throw_grenade,
 		/datum/ai_planning_subtree/travel_to_point/and_clear_target/reinforce,
 	)
 	blackboard = list(
@@ -127,7 +126,7 @@
 		/datum/ai_planning_subtree/simple_find_target,
 		/datum/ai_planning_subtree/call_reinforcements/ancient_milsim,
 		/datum/ai_planning_subtree/follow_squad_leader,
-		/datum/ai_planning_subtree/basic_ranged_attack_subtree/trooper,
+		/datum/ai_planning_subtree/basic_ranged_attack_subtree/trooper/cin_soldier,
 		/datum/ai_planning_subtree/throw_grenade,
 		/datum/ai_planning_subtree/travel_to_point/and_clear_target/reinforce,
 	)
@@ -190,8 +189,9 @@
 		projectile_sound = projectilesound,\
 		cooldown_time = ranged_cooldown,\
 		burst_shots = burst_shots,\
-		after_fire = CALLBACK(src, PROC_REF(decrement_ammo)),\
 	)
+	RegisterSignal(src, COMSIG_BASICMOB_POST_ATTACK_RANGED, PROC_REF(on_ranged_attack))
+	RegisterSignal(src, COMSIG_BASICMOB_PRE_ATTACK_RANGED, PROC_REF(on_pre_ranged_attack))
 
 /mob/living/basic/trooper/cin_soldier/ranged/shotgun_revolver
 	r_hand = /obj/item/gun/ballistic/revolver/shotgun_revolver
@@ -202,6 +202,8 @@
 	burst_shots = 1
 	ranged_cooldown = 1.25 SECONDS
 	var/projectile_deflect_chance = 10
+	ammo_count = 6
+	max_ammo = 6
 
 /mob/living/basic/trooper/cin_soldier/ranged/shotgun_revolver/bullet_act(obj/projectile/projectile)
 	if(prob(projectile_deflect_chance))
@@ -261,13 +263,19 @@
 /mob/living/basic/trooper/cin_soldier/proc/reset_grenade_cooldown()
 	grenade_timerid = null
 
-/// Resets the reload cooldown timer
-/mob/living/basic/trooper/cin_soldier/proc/reset_reload_cooldown()
-	reload_timerid = null
+/// Throws a grenade at a target
+/mob/living/basic/trooper/cin_soldier/proc/throw_grenade_at_target(obj/item/grenade/grenade, atom/target, throw_distance)
+	if(!grenade || QDELETED(grenade) || !target)
+		return
+
+	// Throw the grenade at the target
+	grenade.throw_at(target, throw_distance, 2, src)
+	visible_message(span_warning("[src] throws a grenade at [target]!"))
 
 /// Reloads the weapon
-/mob/living/basic/trooper/cin_soldier/proc/reload_weapon()
+/mob/living/basic/trooper/cin_soldier/ranged/proc/reload_weapon()
 	ammo_count = max_ammo
+	reload_timerid = null
 	visible_message(span_notice("[src] reloads their weapon."))
 
 /// Decrements ammo after firing
@@ -275,6 +283,21 @@
 	ammo_count = max(0, ammo_count - burst_shots)
 	if(ammo_count <= 0)
 		visible_message(span_warning("[src]'s weapon clicks empty!"))
+
+/// Called before a ranged attack is performed
+/mob/living/basic/trooper/cin_soldier/ranged/proc/on_pre_ranged_attack(mob/living/source, atom/target, modifiers)
+	SIGNAL_HANDLER
+	// Check if we have enough ammo for this burst
+	if(ammo_count < burst_shots)
+		if(!reload_timerid) // Start reload process
+			reload_timerid = addtimer(CALLBACK(src, PROC_REF(reload_weapon)), 3 SECONDS, TIMER_DELETE_ME | TIMER_UNIQUE)
+			visible_message(span_warning("[src]'s weapon is empty! Reloading..."))
+		return COMPONENT_CANCEL_RANGED_ATTACK
+
+/// Called after a ranged attack is performed
+/mob/living/basic/trooper/cin_soldier/ranged/proc/on_ranged_attack(mob/living/source, atom/target, modifiers)
+	SIGNAL_HANDLER
+	decrement_ammo()
 
 /// Grenade throwing behavior for Coalition squad leaders
 /datum/ai_planning_subtree/throw_grenade
@@ -303,9 +326,13 @@
 	if(!current_target)
 		return
 
-	// Only throw grenades if target is at medium distance
+	// Only throw grenades if target is at medium distance (increased range)
 	var/distance = get_dist(soldier, current_target)
-	if(distance < 4 || distance > 10)
+	if(distance < 3 || distance > 12)
+		return
+
+	// Add a chance to throw a grenade, not every time we're in range
+	if(!prob(25))
 		return
 
 	// Queue the throw grenade behavior
@@ -313,6 +340,9 @@
 
 	// Set cooldown using timer
 	soldier.grenade_timerid = addtimer(CALLBACK(soldier, TYPE_PROC_REF(/mob/living/basic/trooper/cin_soldier, reset_grenade_cooldown)), cooldown_time, TIMER_DELETE_ME | TIMER_UNIQUE)
+
+	// Debug message
+	soldier.visible_message(span_warning("[soldier] prepares to throw a grenade!"))
 
 	return SUBTREE_RETURN_BEHAVIOR_PERFORMED
 
@@ -353,17 +383,32 @@
 	if(QDELETED(throw_target))
 		return AI_BEHAVIOR_DELAY | AI_BEHAVIOR_FAILED
 
-	// Create and throw a grenade
-	var/obj/item/grenade/emp/grenade = new(soldier.loc)
-	grenade.throw_at(throw_target, throw_distance, 2, soldier)
-	soldier.visible_message(span_warning("[soldier] throws a grenade at [throw_target]!"))
+	// Create a grenade in the soldier's hand
+	var/obj/item/grenade/empgrenade/grenade = new(soldier)
+	soldier.visible_message(span_warning("[soldier] prepares a grenade!"))
+
+	// Short delay before throwing and arming
+	// This simulates the soldier preparing and then arming the grenade just before throwing
+	addtimer(CALLBACK(src, PROC_REF(arm_and_throw_grenade), soldier, grenade, throw_target, throw_distance), 0.5 SECONDS)
 
 	return AI_BEHAVIOR_DELAY | AI_BEHAVIOR_SUCCEEDED
 
-/// Modified ranged attack subtree for Coalition operatives
-/datum/ai_planning_subtree/basic_ranged_attack_subtree/trooper
+/// Helper proc to arm and throw the grenade
+/datum/ai_behavior/throw_grenade/proc/arm_and_throw_grenade(mob/living/basic/trooper/cin_soldier/soldier, obj/item/grenade/grenade, atom/target, throw_distance)
+	if(!soldier || !grenade || QDELETED(grenade) || !target)
+		return
 
-/datum/ai_planning_subtree/basic_ranged_attack_subtree/trooper/SelectBehaviors(datum/ai_controller/controller, seconds_per_tick)
+	// Arm the grenade right before throwing
+	grenade.arm_grenade(soldier)
+	soldier.visible_message(span_warning("[soldier] arms and throws a grenade!"))
+
+	// Throw the grenade immediately after arming
+	soldier.throw_grenade_at_target(grenade, target, throw_distance)
+
+/// Modified ranged attack subtree for Coalition operatives
+/datum/ai_planning_subtree/basic_ranged_attack_subtree/trooper/cin_soldier
+
+/datum/ai_planning_subtree/basic_ranged_attack_subtree/trooper/cin_soldier/SelectBehaviors(datum/ai_controller/controller, seconds_per_tick)
 	. = ..()
 	var/mob/living/basic/trooper/cin_soldier/ranged/soldier = controller.pawn
 
@@ -386,9 +431,6 @@
 
 /datum/ai_behavior/reload_weapon/perform(seconds_per_tick, datum/ai_controller/controller)
 	var/mob/living/basic/trooper/cin_soldier/ranged/soldier = controller.pawn
-
-	// Set reload cooldown
-	soldier.reload_timerid = addtimer(CALLBACK(soldier, TYPE_PROC_REF(/mob/living/basic/trooper/cin_soldier, reset_reload_cooldown)), 3 SECONDS, TIMER_DELETE_ME | TIMER_UNIQUE)
 
 	// Reload the weapon
 	soldier.reload_weapon()
