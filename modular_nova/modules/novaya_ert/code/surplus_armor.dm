@@ -13,102 +13,59 @@
 #define CIN_MARINE_COLORS_COMPLIMENT "#39394d"
 #define CIN_EVIL_COLORS_COMPLIMENT "#3d3d46"
 
-#define HELMET_NO_ACCESSORIES "plain"
-#define HELMET_CHINSTRAP "strap"
-#define HELMET_GLASS_VISOR "glass"
-#define HELMET_BOTH_OF_THE_ABOVE "both"
-
-// Shared Armor Datum
-// CIN armor is decently tough against bullets and wounding, but flounders when lasers enter the play, because it wasn't designed to protect against those much
-
-/datum/armor/cin_surplus_armor
-	melee = 30
-	bullet = 40
-	laser = 10
-	energy = 10
-	bomb = 40
-	fire = 50
-	acid = 50
-	wound = 20
+// Martyr armor absorbs damage incredibly effectively, but the wearer pays the price for it later.
+/datum/armor/armor_cin_martyr
+	melee = ARMOR_LEVEL_WEAK
+	bullet = ARMOR_LEVEL_INSANE // The armor itself barely takes a scratch...
+	laser = ARMOR_LEVEL_TINY
+	energy = ARMOR_LEVEL_TINY
+	bomb = ARMOR_LEVEL_WEAK
+	fire = ARMOR_LEVEL_MID
+	acid = ARMOR_LEVEL_WEAK
+	wound = WOUND_ARMOR_HIGH
 
 // Hats
 
-/obj/item/clothing/head/helmet/cin_surplus_helmet
-	name = "\improper GZ-03 combat helmet"
-	desc = "An outdated service helmet previously used by CIN military forces. The design dates back to the years leading up to CIN - SolFed border war, and was in service until the advent of VOSKHOD powered armor becoming standard issue."
-	worn_icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_object.dmi'
-	icon = 'icons/map_icons/clothing/head/_head.dmi'
-	icon_state = "/obj/item/clothing/head/helmet/cin_surplus_helmet"
-	post_init_icon_state = "helmet_plain"
-	greyscale_config = /datum/greyscale_config/cin_surplus_helmet/object
-	greyscale_config_worn = /datum/greyscale_config/cin_surplus_helmet
-	greyscale_colors = CIN_WINTER_COLORS
-	armor_type = /datum/armor/cin_surplus_armor
+/obj/item/clothing/head/helmet/cin_martyr
+	name = "\improper GZ-04 'Muchenik' kinetic redistribution helmet"
+	desc = "A heavy, full-face helmet that complements the 'Muchenik' vest. It features the same ominous piezoelectric dampening technology.\
+	 The visor is a thick, slightly hazy polycarbonate, designed to withstand impacts that would turn a standard helmet to shrapnel."
+	icon = 'modular_nova/modules/novaya_ert/icons/armor.dmi'
+	worn_icon = 'modular_nova/modules/novaya_ert/icons/wornarmor.dmi'
+	icon_state = "police_helmet"
+	inhand_icon_state = "helmet"
+	armor_type = /datum/armor/armor_cin_martyr
+	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR|HIDESNOUT
+	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH | PEPPERPROOF
+	dog_fashion = null
 	supports_variations_flags = CLOTHING_SNOUTED_VARIATION_NO_NEW_ICON
+	resistance_flags = FIRE_PROOF
+	/// Kinetic absorption component handles damage storage.
+	var/datum/component/kinetic_absorption/kinetic_component
 
-	/// Controls what helmet accessories will be present in a weighted format
-	var/static/list/accessories_weighted_list = list(
-		HELMET_NO_ACCESSORIES = 15,
-		HELMET_CHINSTRAP = 10,
-		HELMET_GLASS_VISOR = 10,
-		HELMET_BOTH_OF_THE_ABOVE = 5,
-	)
+/obj/item/clothing/head/helmet/cin_martyr/Initialize(mapload)
+	. = ..()
+	kinetic_component = AddComponent(/datum/component/kinetic_absorption)
 
-/obj/item/clothing/head/helmet/cin_surplus_helmet/Initialize(mapload)
+/obj/item/clothing/head/helmet/cin_martyr/dropped(mob/user)
+	. = ..()
+	// If removed while still holding damage, apply it all at once in a final, brutal reckoning.
+	if(kinetic_component && kinetic_component.stored_damage > 0)
+		kinetic_component.release_all_damage(user)
+
+/obj/item/clothing/head/helmet/cin_martyr/examine_more(mob/user)
 	. = ..()
 
-	generate_random_accessories()
-
-/// Takes accessories_weighted_list and picks what icon_state suffix to use
-/obj/item/clothing/head/helmet/cin_surplus_helmet/proc/generate_random_accessories()
-	var/chosen_accessories = pick_weight(accessories_weighted_list)
-
-	icon_state = "helmet_[chosen_accessories]"
-
-	if(chosen_accessories == (HELMET_GLASS_VISOR || HELMET_BOTH_OF_THE_ABOVE))
-		flags_cover = HEADCOVERSEYES
-	else
-		flags_cover = NONE
-
-	update_appearance()
-
-/obj/item/clothing/head/helmet/cin_surplus_helmet/examine_more(mob/user)
-	. = ..()
-
-	. += "The GZ-03 series of coalition armor was a collaborative project between the NRI and TransOrbital \
-		to develop a frontline soldier's armor set that could withstand attacks from the Solar Federation's \
-		then relatively new pulse ballistics. The design itself is based upon a far older pattern \
-		of armor originally developed by SolFed themselves, which was the standard pattern of armor design \
-		granted to the first colony ships leaving Sol. Armor older than any of the CIN member states, \
-		upgraded with modern technology. This helmet in particular encloses the entire head save for \
-		the face, and should come with a glass visor and relatively comfortable internal padding. Should, \
-		anyways, surplus units such as this are infamous for arriving with several missing accessories."
+	. += "The helmet of the 'Muchenik' system operates on the same brutal principle as the vest. \
+		A shot to the head that should have been fatal instead results in a concussive force distributed \
+		as a debilitating migraine and internal trauma, stored within the helmet's systems. \
+		The recommended procedure is to keep it sealed until the vest's dispersal cycle is complete, \
+		allowing the energy to be safely bled off through the neural interface in the collar. \
+		Removing it early is known to cause catastrophic cerebral hemorrhaging in test subjects. \
+		It is the ultimate act of faith in Imperial engineering: betting your mind and body that the battle \
+		will be over before the armor's price claims you."
 
 	return .
-
-/obj/item/clothing/head/helmet/cin_surplus_helmet/desert
-	greyscale_colors = CIN_MOUNTAIN_DESERT_COLORS
-
-/obj/item/clothing/head/helmet/cin_surplus_helmet/forest
-	greyscale_colors = CIN_FOREST_COLORS
-
-/obj/item/clothing/head/helmet/cin_surplus_helmet/marine
-	greyscale_colors = CIN_MARINE_COLORS
-
-/obj/item/clothing/head/helmet/cin_surplus_helmet/random_color
-	/// The different colors this helmet can choose from when initializing
-	var/static/list/possible_spawning_colors = list(
-		CIN_WINTER_COLORS,
-		CIN_MOUNTAIN_DESERT_COLORS,
-		CIN_FOREST_COLORS,
-		CIN_MARINE_COLORS,
-		CIN_EVIL_COLORS,
-	)
-
-/obj/item/clothing/head/helmet/cin_surplus_helmet/random_color/Initialize(mapload)
-	greyscale_colors = pick(possible_spawning_colors)
-
-	. = ..()
 
 // Undersuits
 
@@ -151,43 +108,44 @@
 
 // Vests
 
-/obj/item/clothing/suit/armor/vest/cin_surplus_vest
-	name = "\improper GZ-03 armor vest"
-	desc = "An outdated armor vest previously used by CIN military forces. The design dates back to the years leading up to CIN - SolFed border war, and was in service until the advent of VOSKHOD powered armor becoming standard issue."
-	worn_icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor.dmi'
-	icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_object.dmi'
-	icon_state = "vest_basic"
-	armor_type = /datum/armor/cin_surplus_armor
-	supports_variations_flags = CLOTHING_NO_VARIATION
+/obj/item/clothing/suit/armor/vest/cin_martyr
+	name = "\improper GZ-04 'Muchenik' kinetic redistribution vest"
+	desc = "A heavy, boxy plate carrier of NRI design, covered in thick, angled plasteel plates and a network of piezoelectric dampeners. 	A small, red warning stencil on the shoulder reads: 'WARNING: KINETIC DEFLECTION SYSTEM - DO NOT REMOVE UNDER LOAD'. 	It is exceptionally effective at stopping ballistic impacts, seemingly too good to be true."
+	icon = 'modular_nova/modules/novaya_ert/icons/armor.dmi' // Assuming a standard path
+	worn_icon = 'modular_nova/modules/novaya_ert/icons/wornarmor.dmi'
+	icon_state = "police_vest"
+	inhand_icon_state = "armor"
+	blood_overlay_type = "armor"
+	armor_type = /datum/armor/armor_cin_martyr
+	supports_variations_flags = CLOTHING_DIGITIGRADE_VARIATION_NO_NEW_ICON
+	resistance_flags = FIRE_PROOF
+	/// Kinetic absorption component handles damage storage and processing.
+	var/datum/component/kinetic_absorption/kinetic_component
 
-/obj/item/clothing/suit/armor/vest/cin_surplus_vest/Initialize(mapload)
+/obj/item/clothing/suit/armor/vest/cin_martyr/Initialize(mapload)
+	. = ..()
+	// Add kinetic absorption component to handle damage absorption/storage.
+	kinetic_component = AddComponent(/datum/component/kinetic_absorption)
+
+/obj/item/clothing/suit/armor/vest/cin_martyr/dropped(mob/user)
+	. = ..()
+	// If removed while still holding damage, apply it all at once in a final, brutal reckoning.
+	if(kinetic_component && kinetic_component.stored_damage > 0)
+		kinetic_component.release_all_damage(user)
+
+/obj/item/clothing/suit/armor/vest/cin_martyr/examine_more(mob/user)
 	. = ..()
 
-	generate_random_accessories()
-
-/// Decides if the armor vest should have its extra plates or not
-/obj/item/clothing/suit/armor/vest/cin_surplus_vest/proc/generate_random_accessories()
-	if(prob(30))
-		icon_state = "vest_extra"
-		body_parts_covered = CHEST|GROIN // In reality this does like nothing at all but flavor you know
-	else
-		icon_state = "vest_basic"
-		body_parts_covered = CHEST
-
-	update_appearance()
-
-/obj/item/clothing/suit/armor/vest/cin_surplus_vest/examine_more(mob/user)
-	. = ..()
-
-	. += "The GZ-03 series of coalition armor was a collaborative project between the NRI and TransOrbital \
-		to develop a frontline soldier's armor set that could withstand attacks from the Solar Federation's \
-		then relatively new pulse ballistics. The design itself is based upon a far older pattern \
-		of armor originally developed by SolFed themselves, which was the standard pattern of armor design \
-		granted to the first colony ships leaving Sol. Armor older than any of the CIN member states, \
-		upgraded with modern technology. This vest in particular is made up of several large, dense plates \
-		front and back. While vests like this were also produced with extra plating to protect the groin, many \
-		surplus vests are missing them due to the popularity of removing the plates and using them as seating \
-		during wartime."
+	. += "The GZ-04 'Muchenik' (Martyr) system is a terrifyingly pragmatic piece of Imperial technology. \
+		Rather than simply stopping a projectile, its piezoelectric lattice captures and redistributes the kinetic energy \
+		throughout the entire vest, preventing penetration and catastrophic failure of the plates. \
+		The catch is that this energy isn't dissipated safely; it's stored in capacitor-like systems and slowly released \
+		as vibrational energy into the wearer's body, transmuting what would have been a lethal wound into a deep, \
+		agonizing ache that cripples the user over time. <br>\
+		The official doctrine is to wear it only for short, critical engagements, and to never, under any circumstances, \
+		remove the vest until its systems show a full discharge. To do so is to risk every ounce of pain it has absorbed \
+		being unleashed upon the wearer all at once. It is the choice between a certain, immediate death and a probable, \
+		protracted one; a true soldier's sacrifice for the preservation of the Motherland."
 
 	return .
 
