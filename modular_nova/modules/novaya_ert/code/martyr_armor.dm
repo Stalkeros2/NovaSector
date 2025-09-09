@@ -250,6 +250,14 @@
 			absorption_rate = 0.5 // Default for other types
 			stored_damage_type = BRUTE
 
+	// Check for wound potential before absorbing
+	if(ishuman(loc))
+		var/mob/living/carbon/human/wearer = loc
+		var/obj/item/bodypart/affected_part = wearer.get_bodypart(BODY_ZONE_HEAD)
+		if(affected_part && damage_amount >= WOUND_MINIMUM_DAMAGE)
+			// Roll for wounds based on original damage
+			affected_part.check_wounding(damage_amount, damage_type, armor_flag)
+
 	var/damage_to_store = damage_amount * absorption_rate
 	stored_damage += damage_to_store // Store total damage amount
 
@@ -539,6 +547,14 @@
 		else
 			absorption_rate = 0.5 // Default for other types
 			stored_damage_type = BRUTE
+
+	// Check for wound potential before absorbing
+	if(ishuman(loc))
+		var/mob/living/carbon/human/wearer = loc
+		var/obj/item/bodypart/affected_part = wearer.get_bodypart(BODY_ZONE_CHEST)
+		if(affected_part && damage_amount >= WOUND_MINIMUM_DAMAGE)
+			// Roll for wounds based on original damage
+			affected_part.check_wounding(damage_amount, damage_type, armor_flag)
 
 	var/damage_to_store = damage_amount * absorption_rate
 	stored_damage += damage_to_store // Store total damage amount
