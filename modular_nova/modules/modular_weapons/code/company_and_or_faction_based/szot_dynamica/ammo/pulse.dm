@@ -130,13 +130,20 @@
 	light_color = LIGHT_COLOR_PURPLE
 	impact_effect_type = /obj/effect/temp_visual/impact_effect/purple_laser
 
+// First, let's modify the pulse projectile to respect armor absorption
 /obj/projectile/beam/laser/plasma_glob/pulse/on_hit(atom/target, blocked, pierce_hit)
 	. = ..()
-	var/hit_limb_zone
-	if(isliving(target))
-		var/mob/living/victim = target
-		hit_limb_zone = victim.check_hit_limb_zone_name(def_zone)
-		var/armour_block = victim.run_armor_check(hit_limb_zone, BULLET, armour_penetration = 20)
+
+	// Check if the target is wearing martyr armor that would absorb this damage
+	var/mob/living/victim = target
+	if(isliving(victim))
+		var/obj/item/clothing/suit/armor/vest/cin_martyr/vest = victim.get_item_by_slot(ITEM_SLOT_OCLOTHING)
+		var/obj/item/clothing/head/helmet/cin_martyr/helmet = victim.get_item_by_slot(ITEM_SLOT_HEAD)
+
+		// Determine which body part was hit
+		var/hit_limb_zone = victim.check_hit_limb_zone_name(def_zone)
+		var/is_chest_hit = (hit_limb_zone in list(BODY_ZONE_CHEST, BODY_ZONE_PRECISE_GROIN))
+		var/is_head_hit = (hit_limb_zone in list(BODY_ZONE_HEAD, BODY_ZONE_PRECISE_EYES, BODY_ZONE_PRECISE_MOUTH))
 
 		// Get the projectile damage multiplier from the gun that fired this projectile
 		var/proj_damage_mult = 1
@@ -144,8 +151,30 @@
 			var/obj/item/gun/gun = fired_from
 			proj_damage_mult = gun.projectile_damage_multiplier
 
-		// Modify brute damage with the multiplier
+		// Calculate the additional brute damage that would be applied
 		var/brute_damage = 10 * proj_damage_mult
 
-		// Apply brute damage
-		victim.apply_damage(brute_damage, BRUTE, hit_limb_zone, blocked = armour_block, wound_bonus = 5, exposed_wound_bonus = 10, sharpness = SHARP_POINTY)
+		// Check if martyr armor would absorb this damage
+		if(is_chest_hit && istype(vest) && (BULLET in vest.absorbable_armor_flags))
+			vest.absorb_damage(brute_damage, BRUTE, BULLET)
+			return
+
+		if(is_head_hit && istype(helmet) && (BULLET in helmet.absorbable_armor_flags))
+			helmet.absorb_damage(brute_damage, BRUTE, BULLET)
+			return
+
+	// If no martyr armor absorbed the damage, apply it normally
+	var/hit_limb_zone = victim.check_hit_limb_zone_name(def_zone)
+	var/armour_block = victim.run_armor_check(hit_limb_zone, BULLET, armour_penetration = 20)
+
+	// Get the projectile damage multiplier from the gun that fired this projectile
+	var/proj_damage_mult = 1
+	if(fired_from && istype(fired_from, /obj/item/gun))
+		var/obj/item/gun/gun = fired_from
+		proj_damage_mult = gun.projectile_damage_multiplier
+
+	// Modify brute damage with the multiplier
+	var/brute_damage = 10 * proj_damage_mult
+
+	// Apply brute damage
+	victim.apply_damage(brute_damage, BRUTE, hit_limb_zone, blocked = armour_block, wound_bonus = 5, exposed_wound_bonus = 10, sharpness = SHARP_POINTY)
