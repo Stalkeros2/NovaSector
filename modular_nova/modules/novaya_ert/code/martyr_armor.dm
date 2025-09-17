@@ -1,7 +1,7 @@
 // Martyr armor absorbs damage incredibly effectively, but the wearer pays the price for it later.
 /datum/armor/armor_cin_martyr
 	melee = ARMOR_LEVEL_WEAK
-	bullet = ARMOR_LEVEL_INSANE // The armor itself barely takes a scratch...
+	bullet = ARMOR_LEVEL_INSANE
 	laser = ARMOR_LEVEL_TINY
 	energy = ARMOR_LEVEL_TINY
 	bomb = ARMOR_LEVEL_WEAK
@@ -14,13 +14,13 @@
 /obj/item/clothing/suit/armor/vest/cin_martyr
 	name = "\improper GZ-04 'Muchenik' kinetic redistribution vest"
 	desc = "A heavy, boxy plate carrier of NRI design, covered in thick, angled plasteel plates and a network of piezoelectric dampeners. 	A small, red warning stencil on the shoulder reads: 'WARNING: KINETIC DEFLECTION SYSTEM - DO NOT REMOVE UNDER LOAD'. 	It is exceptionally effective at stopping ballistic impacts, seemingly too good to be true."
-	icon = 'modular_nova/modules/novaya_ert/icons/armor.dmi'
-	worn_icon = 'modular_nova/modules/novaya_ert/icons/wornarmor.dmi'
-	icon_state = "police_vest"
+	icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_object.dmi'
+	worn_icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor.dmi'
+	worn_icon_digi = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_digi.dmi'
+	icon_state = "martyr_vest"
 	inhand_icon_state = "armor"
 	blood_overlay_type = "armor"
 	armor_type = /datum/armor/armor_cin_martyr
-	supports_variations_flags = CLOTHING_DIGITIGRADE_VARIATION_NO_NEW_ICON
 	resistance_flags = FIRE_PROOF
 
 	/// List of damage flags that this will attempt to absorb
@@ -323,16 +323,20 @@
 	name = "\improper GZ-04 'Muchenik' kinetic redistribution helmet"
 	desc = "A heavy, full-face helmet that complements the 'Muchenik' vest. It features the same ominous piezoelectric dampening technology.\
 	 The visor is a thick, slightly hazy polycarbonate, designed to withstand impacts that would turn a standard helmet to shrapnel."
-	icon = 'modular_nova/modules/novaya_ert/icons/armor.dmi'
-	worn_icon = 'modular_nova/modules/novaya_ert/icons/wornarmor.dmi'
-	icon_state = "police_helmet"
+	icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_object.dmi'
+	worn_icon = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor.dmi'
+	worn_icon_digi = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_digi.dmi'
+	icon_state = "martyr_helmet"
 	inhand_icon_state = "helmet"
 	armor_type = /datum/armor/armor_cin_martyr
-	flags_inv = HIDEMASK|HIDEEARS|HIDEEYES|HIDEFACE|HIDEHAIR|HIDEFACIALHAIR|HIDESNOUT
-	flags_cover = HEADCOVERSEYES | HEADCOVERSMOUTH | PEPPERPROOF
+	flags_inv = HIDEEARS|HIDEEYES|HIDEHAIR
+	flags_cover = HEADCOVERSEYES | PEPPERPROOF
 	dog_fashion = null
 	supports_variations_flags = CLOTHING_SNOUTED_VARIATION_NO_NEW_ICON
 	resistance_flags = FIRE_PROOF
+	var/nightvision = FALSE
+	var/mob/living/carbon/current_user
+	actions_types = list(/datum/action/item_action/toggle_nv_helmet)
 
 	/// List of damage flags that this will attempt to absorb
 	var/list/absorbable_armor_flags = list(
@@ -362,6 +366,7 @@
 	. = ..()
 	if(!(slot & ITEM_SLOT_HEAD))
 		return
+	current_user = user
 	RegisterSignals(user, list(COMSIG_ITEM_ATTACK, COMSIG_ITEM_ATTACK_ATOM, COMSIG_ITEM_HIT_REACT), PROC_REF(on_take_damage))
 	RegisterSignal(user, COMSIG_PROJECTILE_PREHIT, PROC_REF(on_projectile_hit))
 	RegisterSignal(user, COMSIG_LIVING_DEATH, PROC_REF(on_user_death))
@@ -383,6 +388,9 @@
 	if(processing)
 		processing = FALSE
 		STOP_PROCESSING(SSobj, src)
+
+	disable_nv()
+	current_user = null
 
 /obj/item/clothing/head/helmet/cin_martyr/process(seconds_per_tick)
 	var/total_damage = 0
@@ -615,6 +623,49 @@
 	processing = FALSE
 	STOP_PROCESSING(SSobj, src)
 
+/obj/item/clothing/head/helmet/expeditionary_corps/proc/enable_nv(mob/user)
+	if(current_user)
+		var/obj/item/organ/eyes/my_eyes = current_user.get_organ_by_type(/obj/item/organ/eyes)
+		if(my_eyes)
+			my_eyes.color_cutoffs = list(10, 30, 10)
+			my_eyes.flash_protect = FLASH_PROTECTION_SENSITIVE
+		current_user.add_client_colour(/datum/client_colour/glass_colour/lightgreen, REF(src))
+
+/obj/item/clothing/head/helmet/expeditionary_corps/proc/disable_nv()
+	if(current_user)
+		var/obj/item/organ/eyes/my_eyes = current_user.get_organ_by_type(/obj/item/organ/eyes)
+		if(my_eyes)
+			my_eyes.color_cutoffs = initial(my_eyes.color_cutoffs)
+			my_eyes.flash_protect = initial(my_eyes.flash_protect)
+		current_user.remove_client_colour(/datum/client_colour/glass_colour/lightgreen, REF(src))
+		current_user.update_sight()
+
+/obj/item/clothing/head/helmet/expeditionary_corps/click_alt(mob/user)
+	if(!current_user)
+		return
+
+	nightvision = !nightvision
+	if(nightvision)
+		to_chat(user, span_notice("You flip the NV goggles down."))
+		enable_nv()
+	else
+		to_chat(user, span_notice("You flip the NV goggles up."))
+		disable_nv()
+	update_appearance()
+	return CLICK_ACTION_SUCCESS
+
+/obj/item/clothing/head/helmet/expeditionary_corps/Destroy()
+	disable_nv()
+	current_user = null
+	return ..()
+
+/obj/item/clothing/head/helmet/expeditionary_corps/update_icon_state()
+	. = ..()
+	if(nightvision)
+		icon_state = "exp_corps_on"
+	else
+		icon_state = "exp_corps"
+
 /obj/item/clothing/head/helmet/cin_martyr/examine_more(mob/user)
 	. = ..()
 
@@ -628,3 +679,20 @@
 		will be over before the armor's price claims you."
 
 	return .
+
+
+/datum/action/item_action/toggle_nv_helmet
+	name = "Toggle Nightvision"
+
+/datum/action/item_action/toggle_nv_helmet/Trigger(trigger_flags)
+	var/obj/item/clothing/head/helmet/expeditionary_corps/my_helmet = target
+	if(!my_helmet.current_user)
+		return
+	my_helmet.nightvision = !my_helmet.nightvision
+	if(my_helmet.nightvision)
+		to_chat(owner, span_notice("You flip the NV goggles down."))
+		my_helmet.enable_nv()
+	else
+		to_chat(owner, span_notice("You flip the NV goggles up."))
+		my_helmet.disable_nv()
+	my_helmet.update_appearance()
