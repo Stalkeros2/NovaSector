@@ -1908,20 +1908,6 @@ TREK
 	name = "Teshari Hardsuit"
 	json_config = 'modular_nova/modules/GAGS/json_configs/teshari_fallbacks/hardsuit.json'
 
-/*
-*	CIN SURPLUS ARMOR
-*/
-
-// Helmet
-/datum/greyscale_config/cin_surplus_helmet
-	name = "CIN Surplus Helmet"
-	icon_file = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor.dmi'
-	json_config = 'modular_nova/modules/GAGS/json_configs/nri_surplus_equipment/helmet.json'
-
-/datum/greyscale_config/cin_surplus_helmet/object
-	name = "CIN Surplus Helmet (OBJ)"
-	icon_file = 'modular_nova/modules/novaya_ert/icons/surplus_armor/surplus_armor_object.dmi'
-
 // Undersuit
 /datum/greyscale_config/cin_surplus_undersuit
 	name = "CIN Surplus Undersuit"
