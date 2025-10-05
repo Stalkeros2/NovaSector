@@ -18,7 +18,7 @@
 	item_type = /obj/item/storage/backpack/industrial/cin_surplus/random_color
 
 /datum/armament_entry/company_import/nri_surplus/clothing/helmet
-	item_type = /obj/item/clothing/head/helmet/cin_surplus_helmet/random_color
+	item_type = /obj/item/clothing/head/helmet/cin_surplus_helmet
 	cost = PAYCHECK_COMMAND
 
 /datum/armament_entry/company_import/nri_surplus/clothing/vest

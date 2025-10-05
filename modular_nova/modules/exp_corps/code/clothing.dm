@@ -238,7 +238,7 @@
 		if(my_eyes)
 			my_eyes.color_cutoffs = initial(my_eyes.color_cutoffs)
 			my_eyes.flash_protect = initial(my_eyes.flash_protect)
-		current_user.remove_client_colour(/datum/client_colour/glass_colour/lightgreen, REF(src))
+		current_user.remove_client_colour(REF(src))
 		current_user.update_sight()
 
 /obj/item/clothing/head/helmet/expeditionary_corps/click_alt(mob/user)

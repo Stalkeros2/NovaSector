@@ -25,6 +25,9 @@
 	acid = 50
 	wound = 20
 
+/datum/client_colour/glass_colour/predator_vision
+	color = COLOR_MATRIX_GRAYSCALE
+
 // Hats
 
 /obj/item/clothing/head/helmet/cin_surplus_helmet
@@ -35,6 +38,84 @@
 	icon_state = "helmet"
 	armor_type = /datum/armor/cin_surplus_armor
 	supports_variations_flags = CLOTHING_SNOUTED_VARIATION_NO_NEW_ICON
+	var/predator_vision = FALSE
+	var/thermal_overlay = "helmet_predator"
+	var/mob/living/carbon/current_user
+	actions_types = list(/datum/action/item_action/toggle_predator_helmet)
+
+/datum/action/item_action/toggle_predator_helmet
+	name = "Toggle Thermal Imaging"
+
+/datum/action/item_action/toggle_predator_helmet/Trigger(trigger_flags)
+	var/obj/item/clothing/head/helmet/cin_surplus_helmet/my_helmet = target
+	if(!my_helmet.current_user)
+		return
+	my_helmet.predator_vision = !my_helmet.predator_vision
+	if(my_helmet.predator_vision)
+		to_chat(owner, span_notice("You turn thermals on."))
+		my_helmet.enable_predator()
+	else
+		to_chat(owner, span_notice("You turn thermals off."))
+		my_helmet.disable_predator()
+	my_helmet.update_appearance()
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/equipped(mob/user, slot)
+	. = ..()
+	current_user = user
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/proc/enable_predator(mob/user)
+	if(current_user)
+		var/obj/item/organ/eyes/my_eyes = current_user.get_organ_by_type(/obj/item/organ/eyes)
+		if(my_eyes)
+			my_eyes.color_cutoffs = list(255, 0, 0)
+			my_eyes.sight_flags |= SEE_MOBS
+			my_eyes.flash_protect = FLASH_PROTECTION_SENSITIVE
+		current_user.add_client_colour(/datum/client_colour/glass_colour/predator_vision, REF(src))
+		current_user.update_sight()
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/proc/disable_predator()
+	if(current_user)
+		var/obj/item/organ/eyes/my_eyes = current_user.get_organ_by_type(/obj/item/organ/eyes)
+		if(my_eyes)
+			my_eyes.color_cutoffs = initial(my_eyes.color_cutoffs)
+			my_eyes.sight_flags = initial(my_eyes.sight_flags)
+			my_eyes.flash_protect = initial(my_eyes.flash_protect)
+		current_user.remove_client_colour(REF(src))
+		current_user.update_sight()
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/click_alt(mob/user)
+	if(!current_user)
+		return
+
+	predator_vision = !predator_vision
+	if(predator_vision)
+		to_chat(user, span_notice("You turn thermals on."))
+		enable_predator()
+	else
+		to_chat(user, span_notice("You turn thermals off."))
+		disable_predator()
+	update_appearance()
+	return CLICK_ACTION_SUCCESS
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/dropped(mob/user)
+	. = ..()
+	disable_predator()
+	current_user = null
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/Destroy()
+	disable_predator()
+	current_user = null
+	return ..()
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/update_icon_state()
+	. = ..()
+	icon_state = predator_vision ? "helmet_active" :"helmet"
+
+/obj/item/clothing/head/helmet/cin_surplus_helmet/update_overlays()
+	. = ..()
+	if(predator_vision)
+		. += thermal_overlay
+		. += emissive_appearance(icon, thermal_overlay, src)
 
 /obj/item/clothing/head/helmet/cin_surplus_helmet/examine_more(mob/user)
 	. = ..()

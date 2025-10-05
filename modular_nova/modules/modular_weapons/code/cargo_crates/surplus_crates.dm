@@ -38,7 +38,7 @@
 		/obj/item/clothing/gloves/tackler/combat = ITEM_WEIGHT_CLOTHING,
 		/obj/item/clothing/shoes/jackboots = ITEM_WEIGHT_CLOTHING,
 		// Armors
-		/obj/item/clothing/head/helmet/cin_surplus_helmet/random_color = ITEM_WEIGHT_ARMOR,
+		/obj/item/clothing/head/helmet/cin_surplus_helmet = ITEM_WEIGHT_ARMOR,
 		/obj/item/clothing/suit/armor/vest/cin_surplus_vest = ITEM_WEIGHT_ARMOR,
 		/obj/item/clothing/head/helmet/nri_police = ITEM_WEIGHT_ARMOR,
 		/obj/item/clothing/suit/armor/vest/nri_police = ITEM_WEIGHT_ARMOR,
