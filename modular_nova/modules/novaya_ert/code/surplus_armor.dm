@@ -26,7 +26,7 @@
 	wound = 20
 
 /datum/client_colour/glass_colour/predator_vision
-	color = COLOR_MATRIX_GRAYSCALE
+	color = list(1,0,0,0, 0,0.5,0.5,0, 0,0.5,0.5,0, 0,0,0,1, 0,0,0,0)
 
 // Hats
 
