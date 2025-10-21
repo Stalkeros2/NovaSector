@@ -345,34 +345,42 @@
 						- Strong point defense <br>
 						- ~1/2 a tile's length of movement range
 					<br>
-					<b>NRI</b> <br>
-					The NRI's navy has always been at least a contender to SolFed's and Nanotrasen's own, heavily focused on missiles
-					with very few ships straying away from that doctrine.
+					<b>Heliostatic Coalition</b> <br>
+					The Heliostatic Coalition does not believe in simple attrition or brute force. Their doctrine is built on a single,
+					unshakable principle: to see first, decide first, and act first. Every asset, from a single infantryman to a capital
+					ship, is a node in a vast, AI-managed battlefield network. Victory is achieved by paralyzing the enemy's ability
+					to perceive, communicate, and coordinate, before dismantling them with precise, overwhelming force.
 						<br>
-						-- Patrol Corvette --
-						A common sight in NRI controlled space, with many owned by not only the navy, but also the government's
-						police forces. Usually what that means is parking one near unruly stations and outposts, just to remind
-						them who owns the space they live in. <br>
+						-- Sentinel-class Corvette -- <br>
+						A ubiquitous patrol and picket vessel, equipped with powerful sensors for its size. <br>
 						- Represented by a small ship marker <br>
 						- Cannons <br>
-						- ~1 tile's length of movement range
+						- <b>Advanced Sensors:</b> Can reveal hidden enemy units within 1.5 tile lengths. <br>
+						- ~1.5 tile's length of movement range
 						<br>
-						-- Defense Frigate -- <br>
-						Built for the express purpose of ruining the day of any territorial invader, stacked up with the heaviest
-						armor of any frigate in the known universe, with weapons to deal back any damage thrown at it. <br>
+						-- Vanguard-class Destroyer -- <br>
+						The multi-role backbone of the fleet. A balanced platform capable of engaging multiple threats. <br>
 						- Represented by a medium ship marker <br>
 						- Cannons <br>
 						- 4 Seeking missiles <br>
-						- Heavy armor <br>
-						- ~1/2 a tile's length of movement range
+						- <b>Point Defense Network:</b> Grants a +2 defensive power bonus to itself and one other friendly ship within 0.5 tiles against missile attacks. <br>
+						- ~1 tile's length of movement range
 						<br>
-						-- Missile Destroyer -- <br>
-						Missiles? You like missiles don't you? I hope you do, because when NRI naval command demanded more missiles
-						on a vessel, their shipyards gave the answer in the form of what is essentially a cargo ship filled to
-						the brim with every guided missile they could find. <br>
-						- Represented by a large ship marker <br>
-						- <b>Bottomless</b> seeking missiles <br>
-						- Heavy armor <br>
+						-- Oracle-class Command Cruiser -- <br>
+						A fragile but invaluable vessel that serves as a fleet command and electronic warfare node. <br>
+						- Represented by a large ship marker (distinct design) <br>
+						- Cannons <br>
+						- <b>Fleetwide ECM:</b> All friendly ships within 2 tiles gain a +3 bonus to their defensive power against seeking missiles and torpedoes. <br>
+						- <b>Network Hub:</b> If this ship is destroyed, all other Heliostatic ships suffer a -1 penalty to their defensive power for the remainder of the game due to network degradation. <br>
+						- Weak construction <br>
+						- ~1 tile's length of movement range
+						<br>
+						-- Javelin-class Artillery Cruiser -- <br>
+						The long-range fist of the Coalition. It possesses a devastating main weapon but is poorly equipped for brawling. <br>
+						- Represented by an alternative large ship marker <br>
+						- <b>Spinal Mass Driver:</b> A primary weapon with a range of 3 tile lengths. It cannot fire at targets within 1 tile. If it hits, roll two damage dice and apply the worse result to the target. <br>
+						- Weak point defense <br>
+						- Heavy armor (on the forward arc only) <br>
 						- ~1/2 a tile's length of movement range
 					<br>
 					<b>Mothic Raiders</b>
@@ -407,23 +415,24 @@
 						- ~1 tile's movement range
 					<br>
 				<h2>Example Scenarios</h2>
-					-- Nanotrasen/NRI Station Skirmish -- <br>
-					A Nanotrasen sponsored station located in NRI border territories has violated several regulations
-					and laws, and an NRI patrol fleet has been sent to repossess the station. A force of Nanotrasen
-					ships jumps in just in time to intercept. <br>
-					- Takes place with a Nanotrasen station surrounded by a large asteroid field of some kind between
-					where both teams start. <br>
-					- Either side will win through complete destruction or surrender of the enemy. <br>
-					- The NRI should start with a few more ships, or stronger ships than the NT force, however
-					the NT station should have several defensive platforms surrounding it to supplement. <br>
+					-- The Information Gap (Heliostatic Coalition vs. SolFed) -- <br>
+					A Heliostatic patrol enters a nebula-rich system to destroy a SolFed listening post, unaware that a SolFed
+					battlegroup is conducting exercises nearby. <br>
+					- <b>Terrain:</b> The board is dominated by large gas clouds and nebulas that heavily reduce visibility. Place a SolFed "Listening Station" (a stationary token with weak construction) in the center of the board. <br>
+					- <b>Objectives:</b> The Heliostatic Coalition wins by destroying the Listening Station. SolFed wins by destroying the entire Heliostatic fleet. <br>
+					- <b>Forces:</b> The Heliostatic fleet is smaller but has superior sensors (all ships can see 0.5 tiles further into nebulae). The SolFed fleet is larger and more brawler-focused, with several Light Cruisers. <br>
 					<br>
-					-- NRI/SolFed Border Conflict -- <br>
-					Two sizeable fleets from both SolFed, and the NRI meet in disputed space. A battle ensues soon
-					after, this fight being only a small part of a larger battle. <br>
-					- Takes place in the rings of a nearby planet, large dust fields and asteroids making spotting
-					other ships difficult. <br>
-					- Either side will win through complete destruction or surrender of the enemy. <br>
-					- Both the NRI and SolFed fleets should be about the same size and strength.
+					-- Shattered Network (Heliostatic Coalition vs. Nanotrasen / Mothic Raiders) -- <br>
+					A Heliostatic Oracle-class Command Cruiser has suffered a drive failure and is adrift. An enemy force has moved in to capture or destroy it, while a Coalition relief force jumps in to save it. <br>
+					- <b>Terrain:</b> Standard asteroid field. The derelict Oracle is placed in the center. <br>
+					- <b>Objectives:</b> The attacking player (Nanotrasen or Mothic) wins by destroying the Oracle. The Heliostatic player wins if the Oracle is still intact at the end of 10 turns, or if the enemy force is destroyed. <br>
+					- <b>Forces:</b> The Heliostatic player's relief force is powerful but small. The attacker has a numerical advantage. The Oracle itself is immobile, has Weak Construction, and its powerful ECM is offline—it has a default defensive power of 5. This scenario forces the Heliostatic player to protect a critical vulnerability. <br>
+					<br>
+					-- Stand-Off at the Glycinium Belt (Heliostatic Coalition vs. Any Faction) -- <br>
+					The Coalition must protect a convoy of three unarmed civilian freighters (Weak Construction, slow movement) as they traverse a long, sparse asteroid belt. An enemy ambush lies in wait. <br>
+					- <b>Terrain:</b> A long, narrow board representing the belt. The Heliostatic convoy starts at one short end. <br>
+					- <b>Objectives:</b> The Heliostatic player wins if 2 of the 3 freighters exit the opposite board edge. The enemy wins by destroying the freighters or forcing the Coalition to retreat. <br>
+					- <b>Forces:</b> The Heliostatic player has a fleet built around a Javelin-class Artillery Cruiser and supporting vessels, perfect for long-range fire. The enemy ambusher has a fleet of fast, close-range brawlers (like Mothic Raiders or NT Patrol Corvettes) that start hidden in the asteroid field. This scenario tests the Heliostatic player's ability to use their range to thin the enemy ranks before they can close in. <br>
 					<br>
 					-- SolFed/Mothic Raiders Convoy Raid -- <br>
 					A convoy of Nanotrasen cargo vessels, escorted by a small patrol force, come under attack by a sizeable
