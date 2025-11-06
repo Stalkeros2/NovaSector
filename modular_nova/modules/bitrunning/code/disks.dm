@@ -67,6 +67,10 @@
 	balloon_alert(user, "character set!")
 	to_chat(user, span_notice("Character set to [choice] sucessfully!"))
 
+	// Force close any remaining UI
+	if(user.client?.prefs)
+		user.client.prefs.ui_close(user)
+
 /datum/orderable_item/bitrunning_tech/ability_tier0
 	cost_per_order = 350
 	purchase_path = /obj/item/bitrunning_disk/ability/tier0
