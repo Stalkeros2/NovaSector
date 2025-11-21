@@ -75,11 +75,11 @@
 		/obj/item/mod/module/magnetic_harness,
 		/obj/item/mod/module/status_readout/operational,
 		/obj/item/mod/module/jetpack,
-		/obj/item/mod/module/visor/meson,
+		/obj/item/mod/module/visor/thermal,
 	)
 	default_pins = list(
 		/obj/item/mod/module/jetpack,
-		/obj/item/mod/module/visor/meson,
+		/obj/item/mod/module/visor/thermal,
 	)
 	insignia_type = /obj/item/mod/module/insignia/milsim_saboteur
 	additional_modules = /obj/item/mod/module/dispenser/ancient_milsim/saboteur
@@ -140,20 +140,12 @@
 	new_cooldown_time = 15 SECONDS
 
 /obj/item/mod/module/dispenser/ancient_milsim/trapper
-	name = "MOD chameleon projector-stealth landmines dispenser module"
-	desc = "This module can create a chameleon projector and additional stealth landmines at the user's liking."
-	dispense_type = /obj/item/chameleon
+	name = "MOD disruptor pistol-stealth landmines dispenser module"
+	desc = "This module can create a disruptor pistol and additional stealth landmines at the user's liking."
+	dispense_type = /obj/item/gun/energy/recharge/fisher
 	cooldown_time = 10 SECONDS
 	new_dispense_type = /obj/item/minespawner/ancient_milsim
 	new_cooldown_time = 10 SECONDS
-
-/obj/item/mod/module/dispenser/ancient_milsim/marksman
-	name = "MOD barricade box-throwing knives dispenser module"
-	desc = "This module can create a box of barricades and additional throwing knives at the user's liking."
-	dispense_type = /obj/item/storage/barricade
-	cooldown_time = 15 SECONDS
-	new_dispense_type = /obj/item/knife/combat/throwing
-	new_cooldown_time = 5 SECONDS
 
 /obj/item/mod/module/dispenser/ancient_milsim/medic
 	name = "MOD custom hypospray-hypospray vials dispenser module"
@@ -188,21 +180,29 @@
 /obj/item/autosurgeon/syndicate/binyat
 	starting_organ = /obj/item/organ/cyberimp/hackerman_deck
 
-/obj/item/mod/module/dispenser/ancient_milsim/sentinel
-	name = "MOD stationary machinegun-machinegun ammo box module"
-	desc = "This module can create a single disassembled heavy machinegun and additional ammo boxes at the user's liking."
-	dispense_type = /obj/item/mounted_machine_gun_folded
-	cooldown_time = 15 SECONDS
-	new_dispense_type = /obj/item/ammo_box/magazine/mmg_box
-	new_cooldown_time = 15 SECONDS
-
 /obj/item/mod/module/dispenser/ancient_milsim/trooper
-	name = "MOD Sol rifle-Sol rifle magazine dispenser module"
+	name = "MOD assault rifle-assault rifle magazine dispenser module"
 	desc = "This module can create a single .40 Sol caliber assault rifle and additional magazines at the user's liking."
-	dispense_type = /obj/item/gun/ballistic/automatic/sol_rifle/evil
+	dispense_type = /obj/item/gun/ballistic/automatic/sol_classic/evil
 	cooldown_time = 25 SECONDS
 	new_dispense_type = /obj/item/ammo_box/magazine/c40sol_rifle/standard
-	new_cooldown_time = 15 SECONDS
+	new_cooldown_time = 10 SECONDS
+
+/obj/item/mod/module/dispenser/ancient_milsim/marksman
+	name = "MOD antimateriel rifle-antimateriel rifle magazine dispenser module"
+	desc = "This module can create a single .60 Strela caliber antimateriel rifle and additional magazines at the user's liking."
+	dispense_type = /obj/item/gun/ballistic/automatic/wylom
+	cooldown_time = 25 SECONDS
+	new_dispense_type = /obj/item/ammo_box/magazine/wylom
+	new_cooldown_time = 10 SECONDS
+
+/obj/item/mod/module/dispenser/ancient_milsim/sentinel
+	name = "MOD super shotgun-buckshot dispenser module"
+	desc = "This module can create a single 12 gauge shotgun and additional buckshot handfuls at the user's liking."
+	dispense_type = /obj/item/gun/ballistic/shotgun/riot/sol/super
+	cooldown_time = 25 SECONDS
+	new_dispense_type = /obj/item/ammo_box/magazine/ammo_stack/s12gauge/prefilled/buckshot/milspec
+	new_cooldown_time = 10 SECONDS
 
 /obj/item/mod/module/insignia/milsim_mechanic
 	color = "#ff7300"

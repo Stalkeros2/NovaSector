@@ -34,13 +34,6 @@
 	. = ..()
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/mechanic(src)
 
-/obj/structure/closet/crate/secure/weapon/milsim/marksman
-	name = "marksman (barricade box/throwing knife dispenser/NVG-sonar)"
-
-/obj/structure/closet/crate/secure/weapon/milsim/marksman/PopulateContents()
-	. = ..()
-	new /obj/item/mod/control/pre_equipped/responsory/milsim/marksman(src)
-
 /obj/structure/closet/crate/secure/weapon/milsim/medic
 	name = "medic (combat hypospray/combat hypovials dispenser/medHUD)"
 
@@ -49,30 +42,37 @@
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/medic(src)
 
 /obj/structure/closet/crate/secure/weapon/milsim/trapper
-	name = "trapper (chameleon projector/stealth landmine dispenser/thermals)"
+	name = "trapper (disruptor pistol/stealth landmine dispenser/thermals)"
 
 /obj/structure/closet/crate/secure/weapon/milsim/trapper/PopulateContents()
 	. = ..()
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/trapper(src)
 
 /obj/structure/closet/crate/secure/weapon/milsim/saboteur
-	name = "saboteur (Binyat implanter/EMP grenade dispenser/material scanner-mesons)"
+	name = "saboteur (Binyat implanter/EMP grenade dispenser/material scanner-thermals)"
 
 /obj/structure/closet/crate/secure/weapon/milsim/saboteur/PopulateContents()
 	. = ..()
 	new /obj/item/clothing/glasses/material(src)
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/saboteur(src)
 
-/obj/structure/closet/crate/secure/weapon/milsim/sentinel
-	name = "sentinel (heavy machinegun/burger dispenser/NVG-sonar)"
-
-/obj/structure/closet/crate/secure/weapon/milsim/sentinel/PopulateContents()
-	. = ..()
-	new /obj/item/mod/control/pre_equipped/responsory/milsim/sentinel(src)
-
 /obj/structure/closet/crate/secure/weapon/milsim/trooper
-	name = "trooper (Sol rifle/Sol rifle magazine dispenser/NVG-sonar)"
+	name = "trooper (assault rifle/assault rifle magazine dispenser/NVG-sonar)"
 
 /obj/structure/closet/crate/secure/weapon/milsim/trooper/PopulateContents()
 	. = ..()
 	new /obj/item/mod/control/pre_equipped/responsory/milsim/trooper(src)
+
+/obj/structure/closet/crate/secure/weapon/milsim/marksman
+	name = "marksman (antimateriel rifle/antimateriel rifle magazine dispenser/NVG-sonar)"
+
+/obj/structure/closet/crate/secure/weapon/milsim/marksman/PopulateContents()
+	. = ..()
+	new /obj/item/mod/control/pre_equipped/responsory/milsim/marksman(src)
+
+/obj/structure/closet/crate/secure/weapon/milsim/sentinel
+	name = "sentinel (super shotgun/magnum buckshot dispenser/NVG-sonar)"
+
+/obj/structure/closet/crate/secure/weapon/milsim/sentinel/PopulateContents()
+	. = ..()
+	new /obj/item/mod/control/pre_equipped/responsory/milsim/sentinel(src)
