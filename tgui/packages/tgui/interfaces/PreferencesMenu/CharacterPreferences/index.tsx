@@ -6,8 +6,9 @@ import { exhaustiveCheck } from 'tgui-core/exhaustive';
 import { PageButton } from '../components/PageButton';
 import type { PreferencesMenuData } from '../types';
 import { AntagsPage } from './AntagsPage';
-import { JobsPage } from './JobsPage';
 // NOVA EDIT ADDITION START
+import { BackgroundsPage } from './BackgroundsPage';
+import { JobsPage } from './JobsPage';
 import { LanguagesPage } from './LanguagesMenu';
 import { LimbsPage } from './LimbsPage';
 // NOVA EDIT ADDITION END
@@ -25,6 +26,7 @@ enum Page {
   Loadout,
   // NOVA EDIT ADDITION START
   Limbs,
+  Backgrounds,
   Languages,
   // NOVA EDIT ADDITION END
 }
@@ -95,6 +97,9 @@ export function CharacterPreferenceWindow(props) {
       pageContents = <LoadoutPage />;
       break;
     // NOVA EDIT ADDITION START
+    case Page.Backgrounds:
+      pageContents = <BackgroundsPage />;
+      break;
     case Page.Limbs:
       pageContents = <LimbsPage />;
       break;
@@ -170,6 +175,16 @@ export function CharacterPreferenceWindow(props) {
               setPage={setCurrentPage}
             >
               Augments+
+            </PageButton>
+          </Stack.Item>
+
+          <Stack.Item grow>
+            <PageButton
+              currentPage={currentPage}
+              page={Page.Backgrounds}
+              setPage={setCurrentPage}
+            >
+              Background
             </PageButton>
           </Stack.Item>
 
