@@ -1,4 +1,3 @@
-// revenant_shapeshift.dm
 /// Revenant ability: Shapeshift into a character from your preferences
 /datum/action/cooldown/spell/shapeshift/revenant
 	name = "Spectral Mimicry"
@@ -18,6 +17,7 @@
 	revert_on_death = TRUE
 	convert_damage = TRUE
 	convert_damage_type = TOX
+
 	/// How much essence it costs to use
 	var/cast_amount = 40
 	/// Reference to the revenant's preferences
@@ -80,7 +80,7 @@
 
 /datum/action/cooldown/spell/shapeshift/revenant/create_shapeshift_mob(atom/loc)
 	// Make sure our internal revenant can't move
-	var/mob/living/basic/revenant/ghost = cast_on
+	var/mob/living/basic/revenant/ghost = owner
 	ghost.apply_status_effect(/datum/status_effect/incapacitating/paralyzed/revenant)
 
 	// Create a human mob
@@ -91,28 +91,29 @@
 		revenant_prefs.safe_transfer_prefs_to(avatar)
 	else
 		// Fallback basic appearance
-		avatar.hair_style = "Bald"
-		avatar.facial_hair_style = "Shaved"
+		avatar.hairstyle = "Bald"
+		avatar.facial_hairstyle = "Shaved"
 		avatar.skin_tone = "caucasian1"
 
 	// Give basic equipment
 	avatar.equipOutfit(/datum/outfit/job/assistant)
 
 	// Apply revenant-specific visuals
-	avatar.alpha = 180
+	avatar.alpha = 220
 	avatar.add_atom_colour("#8F48C6", TEMPORARY_COLOUR_PRIORITY)
-	avatar.set_light(2, 2, "#8F48C6")
+	avatar.set_light(2, 1, "#8F48C6")
 	ADD_TRAIT(avatar, TRAIT_REVENANT_AVATAR, "revenant_shapeshift")
 
 	return avatar
 
-/datum/action/cooldown/spell/shapeshift/revenant/after_unchange(mob/living/caster, mob/living/old_shape)
+/datum/action/cooldown/spell/shapeshift/revenant/do_unshapeshift(mob/living/caster, mob/living/old_shape)
+	. = ..()
 	var/mob/living/basic/revenant/ghost = caster
 	ghost.remove_status_effect(/datum/status_effect/incapacitating/paralyzed/revenant)
 
 	// Add any revenant-specific post-unshape logic here
 	to_chat(caster, span_revennotice("You revert to your spectral form."))
-	return ..()
+	return
 
 /mob/living/basic/revenant/Initialize(mapload)
 	. = ..()
