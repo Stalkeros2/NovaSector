@@ -3,9 +3,16 @@
 /// Matures (updates price) every payday interval
 /// Can be sold to the Security budget account (redeemed for credits)
 /// Pays periodic coupon interest on paydays
+///
+/// DESIGN NOTES:
+/// - Face value = what you paid for the bond (principal is always returned at maturity)
+/// - Coupons = 2% per payday on current market value (passive income)
+/// - Market value fluctuates with security conditions
+/// - Hold to maturity = safe (get your money back + all coupons)
+/// - Sell early = potentially profit (if security improves) or loss (if security degrades)
 
 #define WALL_BOND_UPDATE_INTERVAL (5 MINUTES)  // Same as payday
-#define WALL_BOND_BASE_VALUE (250)              // Face value in credits
+#define WALL_BOND_BASE_VALUE (250)              // Base value in credits
 #define WALL_BOND_VALUE_PER_OFFICER (25)        // Credits added per security personnel
 #define WALL_BOND_MAX_OFFICER_BONUS (275)       // Cap at 11 officers (25*11=275)
 
@@ -26,20 +33,35 @@
 #define WALL_BOND_COUPON_PAYOUT_ANNOUNCE_THRESHOLD (50) // Announce payouts above this amount
 
 /obj/item/wall_bond
-	name = "\improper EPF Heritage Wall Bond"
-	desc = "A bearer security certificate issued by the Security department, backed by the Heliostatic Coalition's \
-		Expeditionary Police Force heritage. Its value fluctuates based on station stability - it matures in value \
-		when security is strong and the alert status is calm. Can be sold back to the Security budget account \
-		for current market value (or face value at maturity). Pays periodic coupon interest on paydays. \
-		Not redeemable for equipment."
+	name = "\improper EPF Solidarity Bond"
+	desc = "A heavy, dark blue fiber-plastic certificate emblazoned with the Expeditionary Police Force's iconic white rectangle emblem. \
+	This is a bearer security certificate issued by the local Security department under EPF charter, backed by the Heliostatic Coalition's \
+	heritage of mutual defense and community resilience."
 	icon = 'icons/obj/economy.dmi'
 	icon_state = "rupee"
 	w_class = WEIGHT_CLASS_TINY
+	special_desc = "\
+	The EPF-issue Solidarity Bond traces its origins to the \"Quiet Century\", the decades after the First Great Interstellar Migration when lost colonies \
+	survived without hope of reinforcement. Rim-world settlements learned that cash-poor but resource-rich communities needed ways to raise immediate funds \
+	for security without waiting for bureaucrats light-years away. <br>\
+	The modern instrument was formalized under the Heliostatic Compact's Mutual Assistance clauses. When an EPF patrol vessel visits a station, be it \
+	Coalition-aligned militia, corporate research outpost, or independent frontier settlement, it brings the authority to issue these certificates. \
+	Local Security forces, acting as the EPF's \"Long Arm\" (proxy) in that sector, can print them on demand using their departmental budget as collateral. <br>\
+	Who buys them? Anyone. Facility crew looking to invest their paychecks. Department heads with surplus budget. Corporate liaisons who see value in backing \
+	local stability. SolFed Espatiers on shore leave hoping to make a quick buck. Even rival factions, sometimes — because the bond's value depends on \
+	security holding strong, creating rare alignment of interests between normally opposed groups. <br>\
+	The EPF takes no cut. The point is not profit. The point is that a militia with funding is a militia that doesn't collapse. \
+	A militia that doesn't collapse is a station that doesn't need an EPF destroyer to bail it out. And a station that doesn't need bailing \
+	out is one more light in the dark that stays lit. <br>\
+	The white rectangle on each bond is not printed — it's a reflective patch identical to those on EPF armor. When light hits it, you see yourself looking back. \
+	The reminder: this certificate's value depends on you, your neighbors, and the wall you choose to build together."
 
-	/// Face value - what you get at maturity
+	/// Face value - what you get at maturity (set to purchase price when bought)
 	var/face_value = WALL_BOND_BASE_VALUE
 	/// Current market value in credits (fluctuates)
 	var/current_value = WALL_BOND_BASE_VALUE
+	/// What the investor actually paid (for reference, same as face_value after purchase)
+	var/purchase_price = 0
 	/// When this bond was last updated
 	var/last_update_time = 0
 	/// When this bond matures (world.time)
@@ -85,17 +107,27 @@
 		if(linked_id && linked_id.registered_name)
 			. += span_info("Investor: [linked_id.registered_name]")
 		if(matured)
-			. += span_warning("STATUS: MATURED - Redeem immediately for face value!")
+			. += span_warning("STATUS: MATURED - Redeem immediately for [face_value] credits (your full principal back)!")
 		else
 			var/time_left = max(0, (maturity_time - world.time) / 600)
 			. += span_info("Matures in: [round(time_left)] minutes")
 			. += span_info("Next coupon: [WALL_BOND_COUPON_RATE * 100]% of [current_value] credits ([round(current_value * WALL_BOND_COUPON_RATE)] credits)")
+
+			// Show yield-to-maturity info (helps players understand holding is safe)
+			if(face_value != current_value)
+				var/diff = face_value - current_value
+				if(diff > 0)
+					. += span_info("If held to maturity, you will GAIN [diff] credits from price adjustment (plus coupons).")
+				else
+					. += span_warning("If held to maturity, you will LOSE [abs(diff)] credits from price adjustment (but coupons may offset this).")
+			else
+				. += span_green("If held to maturity, you will get your full [face_value] credits back (no principal loss).")
 	else
 		. += span_warning("STATUS: Available for purchase - use your ID on this bond to invest")
 
-	. += span_info("Face value at maturity: [face_value] credits.")
+	. += span_info("Face value at maturity: [face_value] credits (your principal).")
 	. += span_info("Current market value: [current_value] credits.")
-	. += span_info("Coupon rate: [WALL_BOND_COUPON_RATE * 100]% per payday.")
+	. += span_info("Coupon rate: [WALL_BOND_COUPON_RATE * 100]% per payday (paid on current market value).")
 	. += span_info("Value updates every [WALL_BOND_UPDATE_INTERVAL / 600] minutes based on:")
 	. += span_info("- Active security personnel (currently [get_active_security_count()])")
 	. += span_info("- Station alert status (currently [get_alert_status_name()])")
@@ -135,14 +167,14 @@
 
 	if(coupon_payout > 0)
 		var/yield_text = " ([round((coupon_payout / current_value) * 100, 0.1)]% yield)"
-		message = "Wall Bond [bond_serial] paid you [coupon_payout] credits in coupon interest[yield_text]!"
+		message = "Solidarity Bond [bond_serial] paid you [coupon_payout] credits in coupon interest[yield_text]!"
 		if(coupon_payout >= WALL_BOND_COUPON_PAYOUT_ANNOUNCE_THRESHOLD)
 			message += " Nice return!"
 	else
 		var/delta = new_value - old_value
 		var/delta_text = delta > 0 ? "increased by [delta]" : "decreased by [abs(delta)]"
 		var/delta_percent = (delta / old_value) * 100
-		message = "Wall Bond [bond_serial] value has [delta_text] ([delta_percent > 0 ? "+" : ""][round(delta_percent, 0.1)]%) to [new_value] credits."
+		message = "Solidarity Bond [bond_serial] value has [delta_text] ([delta_percent > 0 ? "+" : ""][round(delta_percent, 0.1)]%) to [new_value] credits."
 
 	if(ismob(holder) && holder.client)
 		to_chat(holder, span_notice("[icon2html(linked_id.get_cached_flat_icon(), holder)] [message]"))
@@ -211,7 +243,7 @@
 		return
 
 	var/mob/holder = linked_id.loc
-	var/message = "Wall Bond [bond_serial] has MATURED! Redeem it via cargo console for its face value of [face_value] credits."
+	var/message = "Solidarity Bond [bond_serial] has MATURED! Redeem it via cargo console for its face value of [face_value] credits (your full principal back)."
 
 	if(ismob(holder) && holder.client)
 		to_chat(holder, span_warning("[icon2html(linked_id.get_cached_flat_icon(), holder)] [message]"))
@@ -251,7 +283,7 @@
 		if(linked_id)
 			var/mob/holder = linked_id.loc
 			if(ismob(holder) && holder.client)
-				to_chat(holder, span_warning("Wall Bond [bond_serial] coupon payment failed: Security budget insufficient!"))
+				to_chat(holder, span_warning("Solidarity Bond [bond_serial] coupon payment failed: Security budget insufficient!"))
 		return FALSE
 
 	if(issuing_account.transfer_money(owner_account, payout))
@@ -259,7 +291,7 @@
 
 		// Log to account history
 		if(owner_account)
-			owner_account.add_log_to_history(payout, "Wall Bond [bond_serial] Coupon Payment")
+			owner_account.add_log_to_history(payout, "Solidarity Bond [bond_serial] Coupon Payment")
 
 		notify_bond_holder(current_value, current_value, coupon_payout = payout)
 		return TRUE
@@ -318,14 +350,19 @@
 			linked_id = id_card
 			issuing_account = security_account
 
+			// CRITICAL FIX: Face value becomes what the investor paid
+			// This ensures holding to maturity never loses principal
+			face_value = current_value
+			purchase_price = current_value
+
 			// Register with owner's account for payday processing
 			register_with_owner_account()
 
 			balloon_alert(user, "bond purchased!")
-			to_chat(user, span_notice("You purchased Wall Bond [bond_serial] for [current_value] credits."))
-			to_chat(user, span_notice("The Security department now holds your [current_value] credits as collateral."))
+			to_chat(user, span_notice("You purchased Solidarity Bond [bond_serial] for [current_value] credits."))
+			to_chat(user, span_green("This bond will redeem at maturity for [face_value] credits (your full principal back)."))
 			to_chat(user, span_notice("The bond pays [WALL_BOND_COUPON_RATE * 100]% ([round(current_value * WALL_BOND_COUPON_RATE)] credits) coupon interest each payday."))
-			to_chat(user, span_notice("It matures in [round((maturity_time - world.time) / 600)] minutes for [face_value] credits."))
+			to_chat(user, span_notice("It matures in [round((maturity_time - world.time) / 600)] minutes."))
 			playsound(src, 'sound/machines/terminal/terminal_insert_disc.ogg', 50, FALSE)
 		else
 			balloon_alert(user, "transaction failed!")
@@ -357,8 +394,9 @@
 	// Register with new owner
 	register_with_owner_account()
 
-	to_chat(new_owner, span_notice("You are now the registered owner of Wall Bond [bond_serial]."))
-	to_chat(new_owner, span_notice("Current market value: [current_value] credits. Matures in [round(max(0, (maturity_time - world.time) / 600))] minutes."))
+	to_chat(new_owner, span_notice("You are now the registered owner of Solidarity Bond [bond_serial]."))
+	to_chat(new_owner, span_notice("Current market value: [current_value] credits. Face value at maturity: [face_value] credits (protected principal)."))
+	to_chat(new_owner, span_notice("Matures in [round(max(0, (maturity_time - world.time) / 600))] minutes."))
 
 	playsound(src, 'sound/machines/terminal/terminal_insert_disc.ogg', 50, FALSE)
 	return TRUE
@@ -376,7 +414,7 @@
 				return
 
 			// This bond was given/traded to the user physically
-			to_chat(user, span_notice("You claim ownership of Wall Bond [bond_serial] with your ID."))
+			to_chat(user, span_notice("You claim ownership of Solidarity Bond [bond_serial] with your ID."))
 			transfer_ownership(user, user_id)
 		else
 			balloon_alert(user, "you need an ID with a bank account to claim this bond!")
@@ -413,11 +451,15 @@
 	// Determine payout amount
 	var/payout_amount
 	if(matured)
-		payout_amount = face_value
-		to_chat(user, span_notice("Redeeming matured bond at face value: [face_value] credits."))
+		payout_amount = face_value  // Face value = what they paid (principal protected)
+		to_chat(user, span_notice("Redeeming matured bond at face value: [face_value] credits (your full principal back)."))
 	else
 		payout_amount = current_value
 		to_chat(user, span_notice("Redeeming bond early at current market value: [current_value] credits."))
+		if(current_value < face_value)
+			to_chat(user, span_warning("Note: If you hold until maturity ([round((maturity_time - world.time) / 600)] minutes), you would get [face_value] credits instead."))
+		else if(current_value > face_value)
+			to_chat(user, span_green("Great! You're selling at a premium above your [face_value] principal."))
 
 	// Get Security account
 	var/datum/bank_account/security_account = SSeconomy.get_dep_account(ACCOUNT_SEC)
@@ -434,16 +476,18 @@
 	// Transfer FROM Security TO owner (Security buys back bond)
 	if(owner_account.transfer_money(security_account, payout_amount))
 		// Log the transaction
-		owner_account.add_log_to_history(payout_amount, "Wall Bond [bond_serial] Redemption")
+		owner_account.add_log_to_history(payout_amount, "Solidarity Bond [bond_serial] Redemption")
 
 		// Unregister before deletion
 		unregister_from_owner_account()
 
-		to_chat(user, span_notice("You redeem Wall Bond [bond_serial] for [payout_amount] credits!"))
-		if(!matured && payout_amount < face_value)
-			to_chat(user, span_warning("Note: You redeemed early. Holding until maturity would have yielded [face_value] credits."))
-		else if(!matured && payout_amount > face_value)
-			to_chat(user, span_notice("Great timing! You sold above face value due to favorable market conditions."))
+		var/profit_loss = payout_amount - purchase_price
+		if(profit_loss > 0)
+			to_chat(user, span_green("You redeem Solidarity Bond [bond_serial] for [payout_amount] credits! Net profit: +[profit_loss] credits."))
+		else if(profit_loss < 0)
+			to_chat(user, span_warning("You redeem Solidarity Bond [bond_serial] for [payout_amount] credits. Net loss: [profit_loss] credits."))
+		else
+			to_chat(user, span_notice("You redeem Solidarity Bond [bond_serial] for [payout_amount] credits. You got your principal back."))
 
 		playsound(src, 'sound/machines/terminal/terminal_insert_disc.ogg', 50, TRUE)
 		qdel(src)
@@ -455,7 +499,7 @@
 	if(owner_account && linked_id && user.get_idcard() == linked_id)
 		linked_id = null
 		balloon_alert(user, "bond unlinked from ID")
-		to_chat(user, span_notice("Wall Bond [bond_serial] is no longer linked to your ID. You will not receive automatic value updates."))
+		to_chat(user, span_notice("Solidarity Bond [bond_serial] is no longer linked to your ID. You will not receive automatic value updates."))
 	else if(owner_account)
 		balloon_alert(user, "not your bond!")
 	else
@@ -467,9 +511,10 @@
 
 /obj/item/wall_bond_printer
 	name = "\improper EPF Bond Issuer"
-	desc = "A portable device that prints Wall Bonds. Click with a department budget card to set the charging account, then use in-hand to print a bond. \
-		Wall Bonds can be linked to an ID card for value notifications. Bonds start unpurchased - investors must use their ID on the bond to buy it. \
-		Bonds mature after 30-90 minutes, at which point they can be redeemed for face value. They pay 2% coupon interest each payday."
+	desc = "A portable device that prints Solidarity Bonds. Click with a department budget card to set the charging account, then use in-hand to print a bond. \
+		Solidarity Bonds can be linked to an ID card for value notifications. Bonds start unpurchased - investors must use their ID on the bond to buy it. \
+		Bonds mature after 30-90 minutes, at which point they can be redeemed for face value (which equals what the investor paid - principal protected). \
+		They pay 2% coupon interest each payday on the current market value."
 	icon = 'icons/obj/devices/scanner.dmi'
 	icon_state = "inspector"
 	worn_icon_state = "salestagger"
@@ -497,11 +542,12 @@
 
 /obj/item/wall_bond_printer/examine(mob/user)
 	. = ..()
-	. += span_info("Use in-hand to print a Wall Bond.")
+	. += span_info("Use in-hand to print a Solidarity Bond.")
 	. += span_info("Click with a department budget card to set the issuing department.")
 	. += span_info("Alt-click to clear the current issuing department.")
-	. += span_info("Wall Bonds start unpurchased - investors must use their ID on the bond to buy it.")
+	. += span_info("Solidarity Bonds start unpurchased - investors must use their ID on the bond to buy it.")
 	. += span_info("Bonds mature in 30-90 minutes and pay [WALL_BOND_COUPON_RATE * 100]% coupon interest each payday.")
+	. += span_info("IMPORTANT: When purchased, the bond's face value becomes the purchase price - your principal is always protected at maturity.")
 
 	if(charged_account)
 		. += span_notice("Issuing department: [charged_department_name || charged_account.account_holder]")
@@ -517,11 +563,11 @@
 			balloon_alert(user, "card has no account!")
 			return
 
-		// Only Security department can issue Wall Bonds
+		// Only Security department can issue Solidarity Bonds
 		var/dept_name = budget_card.department_name || budget_card.name
 		if(dept_name != ACCOUNT_SEC_NAME && dept_name != "Security")
-			balloon_alert(user, "only Security can issue Wall Bonds!")
-			to_chat(user, span_warning("Wall Bonds can only be issued by the Security department."))
+			balloon_alert(user, "only Security can issue Solidarity Bonds!")
+			to_chat(user, span_warning("Solidarity Bonds can only be issued by the Security department."))
 			return
 
 		charged_account = account
@@ -572,11 +618,13 @@
 	new_bond.issuing_department = charged_department_name
 	new_bond.update_value()  // Sets initial value based on current conditions
 	// owner_account starts as null - bond is unpurchased
+	// face_value starts as WALL_BOND_BASE_VALUE (250) but will be set to purchase price when bought
 
 	new_bond.add_fingerprint(user)
 	playsound(src, 'sound/machines/printer.ogg', 50, FALSE)
-	balloon_alert(user, "Wall Bond printed! Serial: [new_bond.bond_serial]")
+	balloon_alert(user, "Solidarity Bond printed! Serial: [new_bond.bond_serial]")
 	to_chat(user, span_notice("The bond starts unpurchased. An investor must use their ID on the bond to buy it at current market value."))
+	to_chat(user, span_notice("When purchased, the face value becomes the purchase price - their principal is protected at maturity."))
 	to_chat(user, span_notice("The bond will mature in [rand(WALL_BOND_MATURITY_MIN / 600, WALL_BOND_MATURITY_MAX / 600)] minutes and pays [WALL_BOND_COUPON_RATE * 100]% coupon interest each payday."))
 
 /obj/item/wall_bond_printer/add_item_context(obj/item/source, list/context, atom/target, mob/living/user)
@@ -625,9 +673,9 @@
 
 	// Notify about bond payouts (optional - adds flavor)
 	if(payouts_made > 0 && payouts_made == length(owned_wall_bonds))
-		bank_card_talk("All [payouts_made] of your Wall Bonds paid out this payday, totaling [total_payout] credits.")
+		bank_card_talk("All [payouts_made] of your Solidarity Bonds paid out this payday, totaling [total_payout] credits.")
 	else if(payouts_made > 0)
-		bank_card_talk("[payouts_made] of your Wall Bonds paid out this payday, totaling [total_payout] credits.")
+		bank_card_talk("[payouts_made] of your Solidarity Bonds paid out this payday, totaling [total_payout] credits.")
 
 // Also add cleanup in Destroy() if needed
 /datum/bank_account/Destroy()
