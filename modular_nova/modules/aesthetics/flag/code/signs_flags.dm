@@ -180,3 +180,27 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/structure/sign/flag/interdyne, 32)
 	special_desc_requirement = EXAMINE_CHECK_JOB
 	special_desc_jobs = list(JOB_MIME) // this will probably never happen. but it will amuse someone when it does.
 	special_desc = "The folded flag of Interdyne Pharmaceuticals. For some reason, it reminds you of the home of the mimes."
+
+/obj/item/sign/flag/auroran
+	name = "folded flag of the Syndicate"
+	desc = "The folded flag of the Sothran Syndicate."
+	icon_state = "folded_uaf"
+	sign_path = /obj/structure/sign/flag/syndicate
+
+/obj/item/sign/flag/tachyon
+	name = "folded flag of the Syndicate"
+	desc = "The folded flag of the Sothran Syndicate."
+	icon_state = "folded_tt"
+	sign_path = /obj/structure/sign/flag/syndicate
+
+/obj/item/sign/flag/persean
+	name = "folded flag of the Syndicate"
+	desc = "The folded flag of the Sothran Syndicate."
+	icon_state = "folded_pl"
+	sign_path = /obj/structure/sign/flag/syndicate
+
+/obj/item/sign/flag/luddic
+	name = "folded flag of the Syndicate"
+	desc = "The folded flag of the Sothran Syndicate."
+	icon_state = "folded_lc"
+	sign_path = /obj/structure/sign/flag/syndicate
