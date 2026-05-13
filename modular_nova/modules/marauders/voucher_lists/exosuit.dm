@@ -45,6 +45,23 @@
 		/obj/item/mod/construction/plating/syndicate_infiltrator,
 	)
 
+/datum/voucher_set/traitor/mod/voskhod
+	name = "Disassembled Voskhod MODsuit"
+	description = /datum/mod_theme/infiltrator::desc
+	icon = 'icons/obj/clothing/modsuit/mod_clothing.dmi'
+	icon_state = "infiltrator-helmet-sealed"
+	set_items = list(
+		/obj/item/clothing/suit/space/voskhod,
+		/obj/item/clothing/head/helmet/space/voskhod,
+		/obj/item/crafting_conversion_kit/voskhod_refit,
+		/obj/item/storage/backpack/industrial/cin_surplus,
+		/obj/item/mod/module/magnetic_harness,
+		/obj/item/mod/module/quick_carry,
+		/obj/item/mod/module/visor/diaghud,
+		/obj/item/mod/module/chameleon,
+		/obj/item/mod/control/pre_equipped/voskhod/marauder,
+	)
+
 /datum/voucher_set/traitor/mech
 ///	These mechs are their 'evil' type because they have stronger armor values suitable for nova
 //	Its also just thematically cooler
@@ -86,4 +103,13 @@
 	icon_state = /obj/vehicle/sealed/mecha/honker/dark::icon_state
 	set_items = list(
 		/obj/vehicle/sealed/mecha/honker/dark/marauder,
+	)
+
+/datum/voucher_set/traitor/mech/warden
+	name = /obj/vehicle/sealed/mecha/warden::name
+	description = /obj/vehicle/sealed/mecha/warden::desc
+	icon = /obj/vehicle/sealed/mecha/warden::icon
+	icon_state = /obj/vehicle/sealed/mecha/warden::icon_state
+	set_items = list(
+		/obj/vehicle/sealed/mecha/warden/marauder,
 	)

@@ -110,6 +110,21 @@
 		/obj/item/mod/module/thermal_regulator,
 	)
 
+/obj/item/mod/control/pre_equipped/voskhod/marauder
+	applied_cell = /obj/item/stock_parts/power_store/cell/super
+	applied_modules = list(
+		/obj/item/mod/module/storage/syndicate,
+		/obj/item/mod/module/thermal_regulator,
+		/obj/item/mod/module/magnetic_harness,
+		/obj/item/mod/module/flashlight,
+		/obj/item/mod/module/mouthhole,
+	)
+	default_pins = list(
+		/obj/item/mod/module/flashlight,
+		/obj/item/mod/module/auto_doc,
+		/obj/item/mod/module/thermal_regulator,
+	)
+
 /obj/item/mod/control/pre_equipped/tarkon
 	theme = /datum/mod_theme/tarkon
 	applied_modules = list(

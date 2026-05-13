@@ -73,3 +73,20 @@
 	capacitor = new /obj/item/stock_parts/capacitor/quadratic(src)
 	servo = new /obj/item/stock_parts/servo/femto(src)
 	update_part_values()
+
+//Warden
+/obj/vehicle/sealed/mecha/warden/marauder
+	equip_by_category = list(
+		MECHA_L_ARM = /obj/item/mecha_parts/mecha_equipment/weapon/energy/zaibas_lmg,
+		MECHA_R_ARM = /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/dagr,
+		MECHA_UTILITY = list(/obj/item/mecha_parts/mecha_equipment/repair_droid, /obj/item/mecha_parts/mecha_equipment/thrusters/ion),
+		MECHA_POWER = list(),
+		MECHA_ARMOR = list(),
+	)
+
+/obj/vehicle/sealed/mecha/warden/marauder/populate_parts()
+	cell = new /obj/item/stock_parts/power_store/cell/bluespace(src)
+	scanmod = new /obj/item/stock_parts/scanning_module/triphasic(src)
+	capacitor = new /obj/item/stock_parts/capacitor/quadratic(src)
+	servo = new /obj/item/stock_parts/servo/femto(src)
+	update_part_values()

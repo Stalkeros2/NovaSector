@@ -268,8 +268,8 @@
 	name = "35mm multipurpose autocannon shell"
 	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
 	icon_state = "35mm"
-	damage = 45
-	armour_penetration = 35
+	damage = 30
+	armour_penetration = 25
 
 /obj/projectile/bullet/autocannon/on_hit(atom/target, blocked = 0, pierce_hit)
 	. = ..()
