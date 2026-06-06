@@ -1,5 +1,9 @@
 // NOVA PLAQUES
 
+/obj/structure/plaque/static_plaque/golden/commission/Initialize(mapload)
+	. = ..()
+	desc = replacetext(desc, "Spinward", "Nova")
+
 //Current stations
 
 // Interdyne
