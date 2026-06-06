@@ -253,7 +253,7 @@ MAPPING_DIRECTIONAL_HELPERS(/obj/structure/sign/poster/official/the_owl, 32)
 
 /obj/structure/sign/poster/official/no_erp
 	name = "No ERP"
-	desc = "This poster reminds the crew that Enterprise Resource Planning is not allowed by company policy, in accordance with Spinward governmental regulations on megacorporations."
+	desc = "This poster reminds the crew that Enterprise Resource Planning is not allowed by company policy, in accordance with NT corporate regulations on megacorporations." // NOVA EDIT REMOVAL - Total Spinward Death. Spinward governmental -> NT corporate.
 	icon_state = "no_erp"
 
 MAPPING_DIRECTIONAL_HELPERS(/obj/structure/sign/poster/official/no_erp, 32)

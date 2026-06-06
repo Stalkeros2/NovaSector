@@ -103,7 +103,7 @@
 	availability_prob = 25
 
 /datum/market_item/misc/holywater
-	desc = "The Spinward Independent Magicians assume no responsibility for the holy (or unholiness) of this magical reagent."
+	desc = "The Nova Independent Magicians (see: crackheads) assume no responsibility for the holy (or unholiness) of this magical reagent."
 	price_min = PAYCHECK_CREW
 	price_max = PAYCHECK_CREW * 3
 

@@ -218,7 +218,7 @@
 
 /obj/structure/shipping_container/gas/nthi
 	name = "\improper NTHI bulk plasma tank"
-	desc = "A standard-measure gas tank for bulk transport of gases. This one is from NTHI, Nanotrasen's mining and refining subdivision, and contains high-grade gaseous plasma from the Spinward Sector."
+	desc = "A standard-measure gas tank for bulk transport of gases. This one is from NTHI, Nanotrasen's mining and refining subdivision, and contains high-grade gaseous plasma from the Nova Sector." // NOVA EDIT REMOVAL - Total Spinward Death
 	icon_state = "nthi_gas_plasma"
 
 /obj/structure/shipping_container/gas/exagon

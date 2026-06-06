@@ -7,11 +7,11 @@
 
 /obj/structure/sign/map/left
 	icon_state = "map-left"
-	desc = "A navigational chart of the decommissioned Spinward Sector Station SS-02: 'Box' Class Outpost."
+	desc = "A navigational chart of the decommissioned Nova Sector Station SS-02: 'Box' Class Outpost.
 
 /obj/structure/sign/map/right
 	icon_state = "map-right"
-	desc = "A navigational chart of the decommissioned Spinward Sector Station SS-02: 'Box' Class Outpost."
+	desc = "A navigational chart of the decommissioned Nova Sector Station SS-02: 'Box' Class Outpost."
 
 /obj/structure/sign/map/meta
 	desc = "A framed picture of the station. Clockwise from security at the top (red), you see engineering (yellow), science (purple), \

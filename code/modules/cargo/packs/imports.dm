@@ -110,8 +110,8 @@
 	name = "Lethal Shotgun Shell Box Crate"
 	desc = "Contains three boxes of buckshot shotgun shells. \
 		Due to Nanotrasen's failure to secure exclusive manufacturing rights \
-		during the Spinward Hunting and Shooting policy hearings, this import \
-		is heavily taxed, despite being 'legal'. I hope the price tag is worth it."
+		during the Nova Hunting and Shooting policy hearings, this import \
+		is heavily taxed, despite being 'legal'. I hope the price tag is worth it." // NOVA EDIT REMOVAL - Total Spinward Death
 	cost = CARGO_CRATE_VALUE * 10
 	access = ACCESS_ARMORY
 	access_view = ACCESS_ARMORY

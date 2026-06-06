@@ -483,9 +483,9 @@
 /obj/item/gun/ballistic/rifle/sks
 	name = "\improper Sakhno SKS semi-automatic rifle"
 	desc = "A revival of the ancient SKS semi-automatic rifle, redesigned to utilize .310 Strilka rounds. Produced to celebrate the \
-		establishment of the Third Soviet Union in the Spinward Sector. In the wake of the union's collapse, these weapons now hold a \
+		establishment of the KMIF Rim-World Historical Recreation Initiative in the Nova Sector. In the wake of the union's collapse, these weapons now hold a \
 		unique place in history amongst the populace of the sector. However, they are strangely rarer than the Sakhno M2442 Army. \
-		Frontier settlers are known for owning one of these for hunting purposes. Or fighting off annoying tax collectors."
+		Frontier settlers are known for owning one of these for hunting purposes. Or fighting off annoying tax collectors." // NOVA EDIT REMOVAL - Total Spinward Death. "Third Soviet Union in the Spinward Sector" -> "KMIF Rim-World Historical Recreation Initiative in the Nova Sector"
 	icon = 'icons/obj/weapons/guns/wide_guns.dmi'
 	icon_state = "sks"
 	worn_icon_state = "sks"

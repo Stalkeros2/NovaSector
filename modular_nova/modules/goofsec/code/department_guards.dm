@@ -528,7 +528,7 @@
 */
 /datum/job/customs_agent
 	title = JOB_CUSTOMS_AGENT
-	description = "Inspect the packages coming to and from the station, protect the cargo department, beat the shit out of people trying to ship Cocaine to the Spinward Stellar Coalition."
+	description = "Inspect the packages coming to and from the station, protect the cargo department, beat the shit out of people trying to ship Cocaine out of the Nova Sector."
 	faction = FACTION_STATION
 	total_positions = 2
 	spawn_positions = 2

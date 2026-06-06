@@ -1014,7 +1014,7 @@
 		scoundrels, ne'er-do-wells and criminals wherever they may rear their ugly heads.<br>\
 		<br>\
 		A symbol of Nanotrasen security forces, the stun baton is the primary tool officers employ against the \
-		unlawful scum and villainy of the Spinward and abroad. Trained to 'baton first, interrogate later', \
+		unlawful scum and villainy of Nova and abroad. Trained to 'baton first, interrogate later', \
 		Nanotrasen security has long since earned itself a mixed reputation. Able to rapidly shut down the \
 		central nervous system of a criminal with only a few direct applications of the conductive striking head \
 		of the device, few would-be troublemakers want to find themselves on the wrong end of an officer brandishing \
@@ -1026,7 +1026,7 @@
 		arguing that they are 'inhumane' and 'authoritarian'. Nanotrasen, on the other hand, has had no such qualms \
 		when deploying stun batons as a compliance measure across all of their existing stations and facilities against \
 		unruly members of staff." \
-	)
+	) // NOVA EDIT REMOVAL - Total Spinward Death
 
 // Contractor Baton
 

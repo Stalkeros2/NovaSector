@@ -25,7 +25,7 @@
 	DELAY 20
 	SAY You will be breaching an distant waystation on the fringe of Nanotrasen territory.
 	DELAY 25
-	SAY Your main objective is to secure highly classified documents about recent Nanotrasen expansion in the Spinward sector.
+	SAY Your main objective is to secure highly classified documents about recent Nanotrasen expansion in the Nova sector.
 	DELAY 20
 	SAY The documents are located in the secure storage room.
 	DELAY 25
@@ -36,7 +36,7 @@
 	SAY Once you've completed your objectives, Radio-in the smugglers for them to pick you up.
 	DELAY 10
 	SAY This should be a cakewalk, I have the utmost confidence that you will succeed with your objectives. Good luck.
-	DELAY 25"}
+	DELAY 25"} // NOVA EDIT REMOVAL - Total Spinward Death
 
 // Outfits
 /datum/outfit/waystation/

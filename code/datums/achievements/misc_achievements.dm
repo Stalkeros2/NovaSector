@@ -63,7 +63,7 @@
 
 /datum/award/achievement/misc/swirlie
 	name = "A Bowl-d New World"
-	desc = "There's a lot of grisly ways to kick it on the Spinward Periphery, but drowning to death in a toilet probably wasn't what you had in mind. Probably."
+	desc = "There's a lot of grisly ways to kick it on the Nova Sector, but drowning to death in a toilet probably wasn't what you had in mind. Probably." // NOVA EDIT REMOVAL - Total Spinward Death "Spinward Periphery" -> "Nova Sector"
 	database_id = MEDAL_SWIRLIE
 
 /datum/award/achievement/misc/selfouch

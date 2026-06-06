@@ -74,7 +74,7 @@
 	icon_state = "sb_delivery"
 	inhand_icon_state = "sb_delivery"
 	company_source = "Sophronia Broadcasting"
-	company_message = span_bold("Please enjoy your Sophronia Broadcasting's 'Spinward Idol' Musical Instrument, exactly as shown in the hit show!")
+	company_message = span_bold("Please enjoy your Sophronia Broadcasting's 'Nova Idol' Musical Instrument, exactly as shown in the hit show!") // NOVA EDIT REMOVAL - Total Spinward Death
 	w_class = WEIGHT_CLASS_TINY
 
 /obj/item/choice_beacon/music/generate_display_names()
