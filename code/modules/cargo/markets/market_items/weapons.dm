@@ -37,8 +37,8 @@
 /datum/market_item/weapon/strilka
 	name = "Ammobox of .310 Strilka"
 	desc = "Listen, .310 Strilka isn't exactly rare, but if you want it to come through \
-		any source that isn't the Third Soviet diehards, then you get what you get. \
-		Some of this is the good stuff. Some of it is surplus. We make no promises, okay?"
+		any source that isn't the Szot Dynamica diehards, then you get what you get. \
+		Some of this is the good stuff. Some of it is surplus. We make no promises, okay?" // NOVA EDIT REMOVAL - Total Spinward Death. "Third Soviet" -> "Szot Dynamica"
 	stock_max = 7
 	availability_prob = 35
 	item = /obj/effect/spawner/random/armory/strilka

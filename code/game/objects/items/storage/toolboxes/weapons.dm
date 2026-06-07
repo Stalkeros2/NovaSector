@@ -245,7 +245,7 @@
 
 /obj/item/storage/toolbox/guncase/soviet
 	name = "ancient gun case"
-	desc = "A weapon's case. Has the symbol of the Third Soviet Union stamped on the side."
+	desc = "A weapon's case. Has the symbol of the Szot Dynamica stamped on the side." // NOVA EDIT REMOVAL - Total Spinward Death. "Third Soviet Union" -> "Szot Dynamica"
 	icon_state = "sakhno_case"
 	inhand_icon_state = "sakhno_case"
 	weapon_to_spawn = /obj/effect/spawner/random/sakhno

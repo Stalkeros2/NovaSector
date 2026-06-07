@@ -46,7 +46,7 @@
 
 /datum/bounty/item/medical/liver
 	name = "Livers"
-	description = "Multiple high-ranking CentCom diplomats have been hospitalized with liver failure after a recent meeting with Third Soviet Union ambassadors. Help us out, will you? We'll take cybernetic ones if need be, but only if they're upgraded."
+	description = "Multiple high-ranking CentCom diplomats have been hospitalized with liver failure after a recent meeting with Tajaran ambassadors. Help us out, will you? We'll take cybernetic ones if need be, but only if they're upgraded." // NOVA EDIT REMOVAL - Total Spinward Death. "Third Soviet Union" -> "Tajaran"
 	reward = CARGO_CRATE_VALUE * 10
 	required_count = 3
 	wanted_types = list(
