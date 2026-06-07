@@ -145,7 +145,7 @@
 /obj/vehicle/sealed/mecha/savannah_ivanov/artifact
 	name = "\improper Red Sunday"
 	desc = "An insanely overbulked mecha that handily crushes single-pilot opponents. The price is that you need two pilots to use it. \
-			This one is painted red with a huge hammer and sickle emblem on it's back. Probably originates from the Third Soviet Union. \
+			This one is painted red with a huge hammer and sickle emblem on it's back. Probably originates from some commie LARPers. \
 			The servos seem to be rusted with no way to fix them, although the armor on this thing is pretty impressive."
 	icon = 'modular_nova/modules/xenoarchartifacts/icons/coop_mech.dmi'
 	movedelay = 6 // Very slow
