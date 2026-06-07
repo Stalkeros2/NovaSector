@@ -98,7 +98,7 @@ GLOBAL_DATUM_INIT(communications_controller, /datum/communciations_controller, n
 		if(isnull(greenshift)) // if we're not forced to be greenshift or not - check if we are an actual greenshift
 			greenshift = SSdynamic.current_tier.tier == 0 && dynamic_report == /datum/dynamic_tier/greenshift::advisory_report
 
-		. += "<hr><h3>Nanotrasen Department of Intelligence Threat Advisory, Nova Sector:</h3>" // NOVA EDIT REMOVAL - Total Spinward Death
+		. += "<hr><h3>Nanotrasen Department of Intelligence Threat Advisory, Nova Sector:</h3>" // NOVA EDIT REMOVAL - Total Spinward Death. "Spinward Sector" -> "Nova Sector"
 		. += dynamic_report
 
 	SSstation.generate_station_goals(greenshift ? INFINITY : CONFIG_GET(number/station_goal_budget))

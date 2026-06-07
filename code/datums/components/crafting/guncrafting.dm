@@ -105,7 +105,7 @@
 
 /obj/item/weaponcrafting/gunkit/beam_rifle
 	name = "\improper Event Horizon anti-existential beam rifle part kit (DOOMSDAY DEVICE, DO NOT CONSTRUCT)"
-	desc = "What fevered minds wrought this terrible construction kit? To create a frame to harness the strange energies that flow through the Nova Sector towards such horrible acts of violence?" // NOVA EDIT REMOVAL - Total Spinward Death
+	desc = "What fevered minds wrought this terrible construction kit? To create a frame to harness the strange energies that flow through the Nova Sector towards such horrible acts of violence?" // NOVA EDIT REMOVAL - Total Spinward Death. "Spinward Sector" -> "Nova Sector"
 	custom_materials = list(
 		/datum/material/iron = SHEET_MATERIAL_AMOUNT * 5,
 		/datum/material/glass =SHEET_MATERIAL_AMOUNT * 2.5,
