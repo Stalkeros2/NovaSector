@@ -8,39 +8,36 @@
 	var/obj/item/cigarette/stored_cig = null
 
 // Update the icon to show if a cigarette is inserted and lit
-/obj/item/clothing/mask/cigarette_holder/update_icon()
+/obj/item/clothing/mask/cigarette_holder/update_overlays()
 	if(stored_cig)
-		if(stored_cig.lit)
-			icon_state = "cig_holder_lit"
-		else
-			icon_state = "cig_holder_unlit"
-	else
-		icon_state = "cig_holder"
+		. += mutable_appearance(stored_cig.icon, stored_cig.icon_state, FLOAT_LAYER-0.1)
 
 // Interaction when clicking the holder itself (or clicking yourself while holding it)
 /obj/item/clothing/mask/cigarette_holder/attack_self(mob/user)
 	if(!stored_cig)
-		to_chat(user, span_notice("There is no cigarette in the holder to smoke."))
+		balloon_alert(user, "no cigarette!")
 		return
 
 	if(!stored_cig.lit)
-		to_chat(user, span_notice("The cigarette in the holder isn't lit!"))
+		balloon_alert(user, "cigarette unlit!")
 		return
 
-	stored_cig.long_exhale(user)
-	return
+	balloon_alert(user, "smonking...")
+	if(do_after(user, 5 SECONDS, target = source))
+		stored_cig.long_exhale(user)
+		return
 
 /obj/item/clothing/mask/cigarette_holder/attack_self_secondary(mob/user, list/modifiers)
 	if(stored_cig)
 		if(stored_cig.lit)
 			stored_cig.put_out()
 			stored_cig = null
-			to_chat(user, span_notice("You snuff out the cigarette in the holder."))
+			balloon_alert(user, "cigarette snuffed out!")
 			update_appearance()
 			return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 		user.put_in_hands(stored_cig)
 		stored_cig = null
-		to_chat(user, span_notice("You poke the cigarette out of the holder."))
+		balloon_alert(user, "cigarette poked out!")
 		update_appearance()
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 	return ..()
@@ -49,12 +46,12 @@
 /obj/item/clothing/mask/cigarette_holder/attackby(obj/item/I, mob/user, params)
 	if(istype(I, /obj/item/cigarette))
 		if(stored_cig)
-			to_chat(user, span_warning("There is already a cigarette in the holder!"))
+			balloon_alert(user, "already full!")
 			return
 		if(!user.transferItemToLoc(I, src))
 			return
 		stored_cig = I
-		to_chat(user, span_notice("You insert [I] into the holder."))
+		balloon_alert(user, "[I] inserted!")
 		update_appearance()
 		return
 
@@ -64,16 +61,6 @@
 		to_chat(user, span_notice("You light the cigarette in the holder with [I]."))
 		update_appearance()
 		return
-
-	// Remove cigarette with screwdriver or pen
-	if(I.tool_behaviour == TOOL_SCREWDRIVER || istype(I, /obj/item/pen))
-		if(stored_cig)
-			stored_cig.forceMove(get_turf(src))
-			to_chat(user, span_notice("You poke the cigarette out of the holder."))
-			user.put_in_hands(stored_cig)
-			stored_cig = null
-			update_appearance()
-			return
 
 	return ..()
 
