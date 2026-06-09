@@ -9,6 +9,7 @@
 
 // Update the icon to show if a cigarette is inserted and lit
 /obj/item/clothing/mask/cigarette_holder/update_overlays()
+	. = ..()
 	if(stored_cig)
 		. += mutable_appearance(stored_cig.icon, stored_cig.icon_state, FLOAT_LAYER-0.1)
 
@@ -23,7 +24,7 @@
 		return
 
 	balloon_alert(user, "smonking...")
-	if(do_after(user, 5 SECONDS, target = source))
+	if(do_after(user, 3 SECONDS, src))
 		stored_cig.long_exhale(user)
 		return
 
@@ -33,12 +34,12 @@
 			stored_cig.put_out()
 			stored_cig = null
 			balloon_alert(user, "cigarette snuffed out!")
-			update_appearance()
+			update_appearance(UPDATE_OVERLAYS)
 			return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 		user.put_in_hands(stored_cig)
 		stored_cig = null
 		balloon_alert(user, "cigarette poked out!")
-		update_appearance()
+		update_appearance(UPDATE_OVERLAYS)
 		return SECONDARY_ATTACK_CANCEL_ATTACK_CHAIN
 	return ..()
 
@@ -52,14 +53,14 @@
 			return
 		stored_cig = I
 		balloon_alert(user, "[I] inserted!")
-		update_appearance()
+		update_appearance(UPDATE_OVERLAYS)
 		return
 
 	// Light the cigarette inside with any heat source
 	if(stored_cig && !stored_cig.lit && I.get_temperature())
 		stored_cig.light(span_notice("[user] lights the cigarette in the holder with [I]."))
 		to_chat(user, span_notice("You light the cigarette in the holder with [I]."))
-		update_appearance()
+		update_appearance(UPDATE_OVERLAYS)
 		return
 
 	return ..()
