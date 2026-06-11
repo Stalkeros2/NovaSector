@@ -7994,7 +7994,7 @@
 #include "modular_nova\modules\charlie\spawner.dm"
 #include "modular_nova\modules\chat_colors\code\chat_color.dm"
 #include "modular_nova\modules\chemistry_love\pens_medipens.dm"
-#include "modular_nova\modules\cigarette_holder\cigarette_holder.dm"
+#include "modular_nova\modules\cigarette_holder\code\cigarette_holder.dm"
 #include "modular_nova\modules\clock_cult\code\antagonist.dm"
 #include "modular_nova\modules\clock_cult\code\area.dm"
 #include "modular_nova\modules\clock_cult\code\globals.dm"
