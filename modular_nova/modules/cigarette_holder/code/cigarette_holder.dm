@@ -1,7 +1,13 @@
 /obj/item/clothing/mask/cigarette_holder
 	name = "cigarette holder"
-	desc = "A fancy cigarette holder. Can store a single cigarette inside it. If a cigarette is inside, it will intercept attacks aimed at you. Clicking yourself with it lets you take a drag."
+	desc = "A fancy cigarette holder. Can store a single cigarette inside it. Clicking yourself with it lets you take a drag."
+	icon = 'modular_nova/modules/cigarette_holder/icons/cigarette_holder.dmi'
 	icon_state = "cig_holder"
+	worn_icon = 'modular_nova/modules/cigarette_holder/icons/cigarette_holder.dmi'
+	worn_icon_state = "cig_holder_w"
+	lefthand_file = 'modular_nova/modules/cigarette_holder/icons/cigarette_holder_l.dmi'
+	righthand_file = 'modular_nova/modules/cigarette_holder/icons/cigarette_holder_r.dmi'
+	inhand_icon_state = "cig_holder_h"
 	w_class = WEIGHT_CLASS_SMALL
 	slot_flags = ITEM_SLOT_MASK
 
@@ -11,7 +17,26 @@
 /obj/item/clothing/mask/cigarette_holder/update_overlays()
 	. = ..()
 	if(stored_cig)
-		. += mutable_appearance(stored_cig.icon, stored_cig.icon_state, FLOAT_LAYER-0.1)
+		var/mutable_appearance/cigarette = mutable_appearance(stored_cig.icon, stored_cig.icon_state, FLOAT_LAYER-0.1)
+		. += cigarette
+		cigarette.pixel_y += 5
+
+/obj/item/clothing/mask/cigarette_holder/worn_overlays(mutable_appearance/standing, isinhands)
+	. = ..()
+	if(ishuman(loc))
+		var/mob/living/carbon/human/user = loc
+		if(isinhands)
+			if(stored_cig)
+				var/is_right = IS_RIGHT_INDEX(user.get_held_index_of_item(src))
+				var/icon_file = is_right ? stored_cig.righthand_file : stored_cig.lefthand_file
+				var/mutable_appearance/cigarette = mutable_appearance(icon_file, stored_cig.inhand_icon_state)
+				. += cigarette
+				cigarette.pixel_y += 5
+		else
+			if(stored_cig)
+				var/mutable_appearance/cigarette = mutable_appearance(stored_cig.worn_icon, stored_cig.worn_icon_state)
+				. += cigarette
+				cigarette.pixel_y += 5
 
 // Interaction when clicking the holder itself (or clicking yourself while holding it)
 /obj/item/clothing/mask/cigarette_holder/attack_self(mob/user)
