@@ -17,7 +17,7 @@
 /obj/item/clothing/mask/cigarette_holder/update_overlays()
 	. = ..()
 	if(stored_cig)
-		var/mutable_appearance/cigarette = mutable_appearance(stored_cig.icon, stored_cig.icon_state, FLOAT_LAYER-0.1)
+		var/mutable_appearance/cigarette = mutable_appearance(stored_cig.icon, stored_cig.icon_state, LOW_ITEM_LAYER)
 		. += cigarette
 		cigarette.pixel_y += 4
 
@@ -29,7 +29,7 @@
 			if(stored_cig)
 				var/is_right = IS_RIGHT_INDEX(user.get_held_index_of_item(src))
 				var/icon_file = is_right ? stored_cig.righthand_file : stored_cig.lefthand_file
-				var/mutable_appearance/cigarette = mutable_appearance(icon_file, stored_cig.inhand_icon_state)
+				var/mutable_appearance/cigarette = mutable_appearance(icon_file, stored_cig.inhand_icon_state, LOW_ITEM_LAYER)
 				. += cigarette
 				switch(user.dir)
 					if(WEST || EAST)
@@ -38,7 +38,7 @@
 						cigarette.pixel_y -= 1
 		else
 			if(stored_cig)
-				var/mutable_appearance/cigarette = mutable_appearance(stored_cig.worn_icon, stored_cig.worn_icon_state)
+				var/mutable_appearance/cigarette = mutable_appearance(stored_cig.worn_icon, stored_cig.worn_icon_state, LOW_ITEM_LAYER)
 				. += cigarette
 				cigarette.pixel_y += 5
 
