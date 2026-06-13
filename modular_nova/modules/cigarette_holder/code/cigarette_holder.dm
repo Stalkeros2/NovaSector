@@ -17,30 +17,13 @@
 /obj/item/clothing/mask/cigarette_holder/update_overlays()
 	. = ..()
 	if(stored_cig)
-		var/mutable_appearance/cigarette = mutable_appearance(stored_cig.icon, stored_cig.icon_state, FLOAT_LAYER-0.1)
-		. += cigarette
+		// Ensure the cigarette is drawn underneath the holder.
+		// Overlay insertion order isn't guaranteed, so we also force a very low layer.
+		var/mutable_appearance/cigarette = mutable_appearance(stored_cig.icon, stored_cig.icon_state)
 		cigarette.pixel_y += 4
-
-/obj/item/clothing/mask/cigarette_holder/worn_overlays(mutable_appearance/standing, isinhands)
-	. = ..()
-	if(ishuman(loc))
-		var/mob/living/carbon/human/user = loc
-		if(isinhands)
-			if(stored_cig)
-				var/is_right = IS_RIGHT_INDEX(user.get_held_index_of_item(src))
-				var/icon_file = is_right ? stored_cig.righthand_file : stored_cig.lefthand_file
-				var/mutable_appearance/cigarette = mutable_appearance(icon_file, stored_cig.inhand_icon_state)
-				. += cigarette
-				switch(user.dir)
-					if(WEST || EAST)
-						cigarette.pixel_x -= 1
-					if(NORTH)
-						cigarette.pixel_y -= 1
-		else
-			if(stored_cig)
-				var/mutable_appearance/cigarette = mutable_appearance(stored_cig.worn_icon, stored_cig.worn_icon_state)
-				. += cigarette
-				cigarette.pixel_y += 5
+		cigarette.layer = -10
+		cigarette.plane = 0
+		. = list(cigarette) + .
 
 // Interaction when clicking the holder itself (or clicking yourself while holding it)
 /obj/item/clothing/mask/cigarette_holder/attack_self(mob/user)
