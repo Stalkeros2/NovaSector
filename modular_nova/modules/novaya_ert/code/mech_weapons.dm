@@ -188,6 +188,84 @@
 	projectiles = 7
 	ammo_type = MECHA_AMMO_MISSILE_DAGR
 
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/shillelagh
+	name = "\improper M/SL-8 \"Bataan\" guided missile launcher"
+	desc = "A heavy missile pod that requires target acquisition via a 3x3 seeker scan before firing. Lock-on is lost if the target leaves range."
+	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
+	icon_state = "mecha_shillelagh"
+	projectile = /obj/projectile/bullet/rocket/pep/shillelagh
+	projectiles = 4
+	ammo_type = "Shillelagh Missile"
+	/// The specific atom we have locked onto
+	var/atom/locked_target = null
+	/// Cooldown for scanning
+	var/scanning = FALSE
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/shillelagh/action(mob/source, atom/target, list/modifiers)
+	if(!action_checks(target))
+		return FALSE
+
+	// If we have a lock, fire. The projectile will handle homing.
+	if(locked_target)
+		var/fired = ..()
+		if(fired)
+			locked_target = null // Lose lock after firing salvo
+		return fired
+
+	// If no lock, initiate seeker scan
+	if(!scanning)
+		acquire_target(target, source)
+	return FALSE
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/shillelagh/proc/acquire_target(atom/target, mob/user)
+	scanning = TRUE
+	to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("SEEKER: Scanning target area...")]")
+
+	// 1.5 second delay to emulate seeker slewing/processing
+	addtimer(CALLBACK(src, PROC_REF(complete_scan), target), 1.5 SECONDS)
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/shillelagh/proc/complete_scan(atom/target)
+	scanning = FALSE
+	var/turf/center = get_turf(target)
+	if(!center)
+		return
+
+	var/atom/best_target = null
+	var/best_priority = 0 // Mechs/Silicons > Mobs
+
+	for(var/turf/T in range(1, center))
+		for(var/atom/movable/AM in T)
+			var/current_priority = 0
+			if(ismecha(AM) || issilicon(AM))
+				current_priority = 2 // Hard target priority
+			else if(iscarbon(AM) || isbasicmob(AM))
+				current_priority = 1 // Soft target priority
+
+			if(current_priority > best_priority)
+				best_priority = current_priority
+				best_target = AM
+
+	if(best_target)
+		locked_target = best_target
+		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_danger("SEEKER LOCK: [best_target.name] ACQUIRED!")]")
+		playsound(chassis, 'sound/items/weapons/gun/general/lock_on.ogg', 50, TRUE) // Add an appropriate lock-on sound
+	else
+		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_warning("SEEKER: No valid targets found.")]")
+
+/obj/projectile/bullet/rocket/pep/shillelagh
+	name = "shillelagh guided missile"
+	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
+	icon_state = "shillelagh_rocket"
+	homing_turn_speed = 8 // Slower turn rate than DAGR to balance lock-on mechanic
+	damage = 60 // Anti-tank damage
+
+/obj/projectile/bullet/rocket/pep/shillelagh/Initialize(mapload, atom/target)
+	. = ..()
+	if(target)
+		src.homing = TRUE
+		src.set_homing_target(target) // Forces the projectile to track the exact locked atom
+
+
 /obj/projectile/bullet/tank_cannon
 	name = "nonexistent tank shell"
 	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
