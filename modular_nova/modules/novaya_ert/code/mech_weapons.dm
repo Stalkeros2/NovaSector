@@ -108,33 +108,39 @@
 	if(!center)
 		return null
 
-	var/soft_count = 0
-	var/hard_count = 0
+	var/soft_score = 0
+	var/hard_score = 0
 
-	// Scan 3x3 area
+	// Scan 3x3 area; the turf we're actually aiming at counts double,
+	// so the crosshair decides close calls over the surrounding ring.
 	for(var/turf/T in range(1, center))
+		var/proximity = (T == center) ? 2 : 1
 		for(var/atom/movable/victim in T)
-			if(isliving(victim))
+			if(victim == chassis) //don't count ourselves
+				continue
+			if(ismecha(victim) || issilicon(victim)) //mechs and silicons take sabots
+				hard_score += 1 * proximity
+			else if(isliving(victim))
 				var/mob/living/living_victim = victim
 				if(!IS_DEAD_OR_FAKING(living_victim)) //why would corpses matter
-					soft_count++
-			else if(ismecha(victim))
-				hard_count++
+					soft_score += 2 * proximity
 
 	// If no targets found, default to area denial
-	if(soft_count == 0 && hard_count == 0)
+	if(soft_score == 0 && hard_score == 0)
 		return "AREA DENIAL"
 
-	// As HEAP is universal, and humans are a vastly more dangerous-through-flexibility
-	// threat than mechs, soft targets are worth 2x the weight of hard targets.
+	// HEAP is universal, and humans are a vastly more dangerous-through-flexibility
+	// threat than mechs/silicons, so soft targets are worth 2x the weight of hard
+	// targets, on top of the proximity multiplier (2x on the aimed-at turf, 1x on the ring).
 	// If mech points (over-)match, you're dealing with too many mechs and need sabots.
-	// This ensures: 1 mech + 1 human -> HEAP (1 < 2)
+	// This ensures (all targets on the ring):
+	//              1 mech + 1 human -> HEAP (1 < 2)
 	//              2 mechs + 1 human -> Sabot (2 = 2)
 	//              2 mechs + 2 humans -> HEAP (2 < 4)
-	var/hard_weight = hard_count
-	var/soft_weight = soft_count * 2
-
-	if(hard_weight >= soft_weight)
+	// With the aimed-at turf weighting:
+	//              aimed mech + 1 human on ring -> Sabot (2 = 2)
+	//              aimed human + 1 mech on ring -> HEAP (1 < 4)
+	if(hard_score >= soft_score)
 		return "HARD TARGET"
 
 	return "SOFT TARGET"
@@ -180,16 +186,49 @@
 		detach()
 		return
 
-//Guided rockets, which would make them missiles, but they're rockets because their guidance is APKWS-style. 'Easy' but capacity-inefficient alternative to FC-8.
+//Guided rockets, which would make them missiles, but they're rockets because their guidance is manual command-link. 'Easy' but capacity-inefficient alternative to FC-8.
 /obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/dagr
 	name = "\improper M/RP-66 \"Smilgas\" anti-tank guided rocket pod"
-	desc = "A weapon for combat exosuits, produced by KMIF. Launches anti-tank guided missiles with optical and infrared guidance designed to lock-on after launch \
-		and track targets autonomously. Due to the nature of their design, turn rates remain subpar, and its design will do nothing to soft targets."
+	desc = "A weapon for combat exosuits, produced by KMIF. Launches slow-flying anti-tank missiles on a manual command link: while a missile is in flight, \
+		clicking a target corrects its course instead of launching another. Due to the nature of their design, turn rates remain subpar, and its design will do nothing to soft targets."
 	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
 	icon_state = "mecha_dagr"
 	projectile = /obj/projectile/bullet/rocket/pep/dagr
 	projectiles = 7
 	ammo_type = MECHA_AMMO_MISSILE_DAGR
+	/// The missile currently in flight, if any. While set, clicks steer it instead of launching.
+	var/obj/projectile/bullet/rocket/pep/dagr/active_missile
+	/// Minimum delay between accepted steering corrections.
+	var/guidance_cooldown = 0.3 SECONDS
+	/// world.time before which further steering clicks are ignored.
+	var/next_guidance_time = 0
+
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/dagr/action(mob/source, atom/target, list/modifiers)
+	// One missile at a time: while one is alive, clicks guide it instead of firing.
+	// Guidance bypasses action_checks deliberately - no fire cooldown, no ammo/energy cost.
+	if(active_missile && !QDELETED(active_missile))
+		guide_missile(source, target)
+		return FALSE
+	active_missile = null //stale reference, the previous missile already resolved
+	. = ..()
+	if(.)
+		to_chat(chassis.occupants, "[icon2html(src, chassis.occupants)][span_notice("Missile away! Guide it by clicking on a target.")]")
+
+/// Called by the missile on launch to register itself as the in-flight missile.
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/dagr/proc/link_missile(obj/projectile/bullet/rocket/pep/dagr/missile)
+	active_missile = missile
+
+/// Bends the in-flight missile's heading toward the clicked atom, one bounded correction per click.
+/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/dagr/proc/guide_missile(mob/source, atom/target)
+	if(world.time < next_guidance_time)
+		return
+	if(!target || !chassis)
+		return
+	next_guidance_time = world.time + guidance_cooldown
+	var/desired_angle = angle_between_points(RETURN_PRECISE_POINT(active_missile), RETURN_PRECISE_POINT(target))
+	var/turn = closer_angle_difference(active_missile.angle, desired_angle)
+	active_missile.set_angle(active_missile.angle + clamp(turn, -active_missile.max_turn_per_click, active_missile.max_turn_per_click))
+	balloon_alert(source, "guiding")
 
 /obj/projectile/bullet/tank_cannon
 	name = "nonexistent tank shell"
@@ -283,12 +322,19 @@
 	name = "precision guided rocket"
 	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
 	icon_state = "dagr_rocket"
-	homing_turn_speed = 10
+	/// Slow on purpose: the pilot needs time to walk corrections onto the target between clicks.
+	speed = 0.75
+	/// How far (in degrees) a single guidance click may bend our heading.
+	var/max_turn_per_click = 15
 
-/obj/projectile/bullet/rocket/pep/dagr/Initialize(mapload)
+/obj/projectile/bullet/rocket/pep/dagr/fire(fire_angle, atom/direct_target)
 	. = ..()
-	src.homing = TRUE
-	src.set_homing_target(original)
+	if(QDELETED(src))
+		return
+	// Register with the launching rack so its clicks steer us; no homing, we're a pure command-link missile.
+	var/obj/item/mecha_parts/mecha_equipment/weapon/ballistic/missile_rack/dagr/rack = fired_from
+	if(istype(rack))
+		rack.link_missile(src)
 
 /obj/item/mecha_ammo/cannon
 	name = "fabricator canister container"
