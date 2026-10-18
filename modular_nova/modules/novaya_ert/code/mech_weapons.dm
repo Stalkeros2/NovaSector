@@ -108,33 +108,36 @@
 	if(!center)
 		return null
 
-	var/threat_counts = list(
-		"SOFT TARGET" = 0,
-		"HARD TARGET" = 0,
-		"AREA DENIAL" = 0
-	)
+	var/soft_count = 0
+	var/hard_count = 0
 
 	// Scan 3x3 area
 	for(var/turf/T in range(1, center))
-		for(var/atom/movable/AM in T)
-			if(iscarbon(AM) || isbasicmob(AM))
-				threat_counts["SOFT TARGET"]++
-			else if(ismecha(AM) || issilicon(AM))
-				threat_counts["HARD TARGET"]++
+		for(var/atom/movable/victim in T)
+			if(isliving(victim))
+				var/mob/living/living_victim = victim
+				if(!IS_DEAD_OR_FAKING(living_victim)) //why would corpses matter
+					soft_count++
+			else if(ismecha(victim))
+				hard_count++
 
 	// If no targets found, default to area denial
-	if(threat_counts["SOFT TARGET"] == 0 && threat_counts["HARD TARGET"] == 0)
+	if(soft_count == 0 && hard_count == 0)
 		return "AREA DENIAL"
 
-	// Return the threat type with highest count
-	var/highest_threat = "AREA DENIAL"
-	var/highest_count = 0
-	for(var/threat_type in threat_counts)
-		if(threat_counts[threat_type] > highest_count)
-			highest_count = threat_counts[threat_type]
-			highest_threat = threat_type
+	// As HEAP is universal, and humans are a vastly more dangerous-through-flexibility
+	// threat than mechs, soft targets are worth 2x the weight of hard targets.
+	// If mech points (over-)match, you're dealing with too many mechs and need sabots.
+	// This ensures: 1 mech + 1 human -> HEAP (1 < 2)
+	//              2 mechs + 1 human -> Sabot (2 = 2)
+	//              2 mechs + 2 humans -> HEAP (2 < 4)
+	var/hard_weight = hard_count
+	var/soft_weight = soft_count * 2
 
-	return highest_threat
+	if(hard_weight >= soft_weight)
+		return "HARD TARGET"
+
+	return "SOFT TARGET"
 
 //Secondary weapon that's just an effectively-infinite ammo coaxial Zaibas.
 /obj/item/mecha_parts/mecha_equipment/weapon/energy/zaibas_lmg
