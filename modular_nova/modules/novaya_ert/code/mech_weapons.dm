@@ -322,7 +322,7 @@
 	name = "precision guided rocket"
 	icon = 'modular_nova/modules/novaya_ert/icons/mech.dmi'
 	icon_state = "dagr_rocket"
-	/// Slow on purpose: the pilot needs time to walk corrections onto the target between clicks.
+	// Slow on purpose: the pilot needs time to walk corrections onto the target between clicks.
 	speed = 0.75
 	/// How far (in degrees) a single guidance click may bend our heading.
 	var/max_turn_per_click = 15
