@@ -9501,7 +9501,6 @@
 #include "modular_nova\modules\novaya_ert\code\id.dm"
 #include "modular_nova\modules\novaya_ert\code\mech.dm"
 #include "modular_nova\modules\novaya_ert\code\mech_actions.dm"
-#include "modular_nova\modules\novaya_ert\code\mech_aps.dm"
 #include "modular_nova\modules\novaya_ert\code\mech_equipment.dm"
 #include "modular_nova\modules\novaya_ert\code\mech_weapons.dm"
 #include "modular_nova\modules\novaya_ert\code\mod_suit.dm"
